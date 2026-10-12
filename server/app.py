@@ -20,6 +20,10 @@ def create_app(test_config=None):
     # ensure the instance folder exists
     os.makedirs(app.instance_path, exist_ok=True)
 
+    # register blueprints
+    from routes import events
+    app.register_blueprint(events.bp)
+
     # a simple page that says hello
     @app.route('/hello')
     def hello():
