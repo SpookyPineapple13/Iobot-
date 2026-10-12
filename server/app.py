@@ -1,6 +1,7 @@
 import os
 
-from flask import Flask
+from flask import (Flask, jsonify)
+from flask_cors import CORS
 
 ## Application factory 
 def create_app(test_config=None):
@@ -9,6 +10,7 @@ def create_app(test_config=None):
         SECRET_KEY='dev', # should be changed later 
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
+    CORS(app) # enable cross-origin sourcing for all routes
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -24,9 +26,11 @@ def create_app(test_config=None):
     from routes import events
     app.register_blueprint(events.bp)
 
-    # a simple page that says hello
+    # check connection 
     @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
+    def checkConnection():
+        return jsonify({
+            "message": "Affirmative Server Connection"
+        })
 
     return app
