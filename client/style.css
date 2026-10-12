@@ -1,0 +1,16 @@
+
+body {
+    font-family: Arial, sans-serif;
+    color: lightgray;
+    background-color: black;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
