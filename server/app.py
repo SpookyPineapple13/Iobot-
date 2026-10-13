@@ -1,7 +1,7 @@
 import os
 
 from flask import (Flask, jsonify)
-from flask_cors import CORS
+from flask_cors import CORS # type: ignore
 
 ## Application factory 
 def create_app(test_config=None):
