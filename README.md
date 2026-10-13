@@ -54,7 +54,8 @@ I didn’t test this on any device other than my own… So if you run into any i
 - Setting up GitHub in VS Code: <https://code.visualstudio.com/docs/sourcecontrol/github>
 
 Optional, but I recommend: 
-- Helpful: VS Code Live Preview Extension - Allows you to see a preview the site from VS Code
+- VS Code Live Preview Extension - Allows you to see a preview the site from VS Code
+- VS Code Pylance or other Python extensions - For autocomplete and warning-avoidance
 
 #### Libraries 
 
