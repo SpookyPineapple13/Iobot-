@@ -1,6 +1,6 @@
 const API_BASE_URL = "http://127.0.0.1:5000"
 
-async function updateSchedule() {
+async function getSchedule() {
     console.log("fetching schedule")
     const response = await fetch(
         `${API_BASE_URL}/events`
@@ -12,23 +12,20 @@ async function updateSchedule() {
     }
 
     const schedule = await response.json()
-    console.log(schedule)
-    renderPeriods(schedule)
+    return schedule
 }
 
-function renderDate() {
+function renderStringDate(stringDate) {
     const dateElement = document.getElementById("current-date");
-    const now = new Date();
-
-    dateElement.textContent = now.toLocaleDateString("en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-    });
+    dateElement.textContent = Date(stringDate)
+    // Should check for better quality
+    //dateElement.textContent = date.toLocaleDateString("en-US", {
+    //     weekday: "long",
+    //     year: "numeric",
+    //     month: "long",
+    //     day: "numeric"
+    // });
 }
-
-renderDate();
 
 // Placeholder data
 const periods = [
@@ -62,13 +59,19 @@ const periods = [
 ]
 
 
-function renderPeriods(periods) {
-    const schedule = document.getElementById("schedule");
+function renderSchedule(schedule) {
+    const scheduleElement = document.getElementById("schedule");
+    const scheduleType = document.getElementById("day-schedule")
+
+    // The first event is always the schedule type, splice it
+    let scheduleTypeData = schedule.splice(0, 1)[0]
+    scheduleType.textContent = scheduleTypeData.summary
+    renderStringDate(scheduleTypeData.date)
 
     // Clear previously rendered periods.
-    schedule.replaceChildren();
+    scheduleElement.replaceChildren();
 
-    for (const period of periods) {
+    for (const period of schedule) {
         const card = document.createElement("article");
         card.classList.add("period-card");
 
@@ -96,7 +99,7 @@ function renderPeriods(periods) {
             card.append(teacher);
         }
 
-        schedule.append(card);
+        scheduleElement.append(card);
     }
 }
 
@@ -115,10 +118,12 @@ function getOrdinalSuffix(number) {
 
 async function pollData() {
   try {
-    await updateSchedule()
+    const schedule = await getSchedule()
+    renderSchedule(schedule)
   } catch (error) {
     console.error('Fetch error:', error);
   } finally {
+    return
     setTimeout(pollData, 5000); // Wait 5 seconds after completion
   }
 }
