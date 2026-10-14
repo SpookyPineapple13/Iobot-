@@ -41,38 +41,6 @@ function renderDate(date) {
     // });
 }
 
-// Placeholder data
-const periods = [
-    {
-        // Required parameters
-        number: 1,
-        startTime: "8:00 AM",
-        endTime: "8:50 AM",
-        
-        // Optional / Customizable based on Login 
-        name: "Computer Science",
-        location: "Room 204",
-        teacher: "Mr. Smith"
-    },
-    {
-        number: 2,
-        name: "Mathematics",
-        startTime: "8:55 AM",
-        endTime: "9:45 AM",
-        location: "Room 112",
-        teacher: "Mrs. Jones"
-    },
-    {
-        number: 3,
-        name: "Free Period",
-        startTime: "9:50 AM",
-        endTime: "10:40 AM",
-        location: "",
-        teacher: ""
-    },
-]
-
-
 function renderSchedule(schedule) {
     const scheduleElement = document.getElementById("schedule");
     const scheduleType = document.getElementById("day-schedule")
