@@ -1,9 +1,22 @@
 const API_BASE_URL = "http://127.0.0.1:5000"
 
-async function getSchedule() {
+// Refreshing the page through the "Load Schedule" button
+const bGetSchedule = document.getElementById("load-schedule")
+const iGetSchedule = document.getElementById("load-schedule-input")
+bGetSchedule.addEventListener(() => {
+    const inputDate = Date(iGetSchedule.value)
+    pollData(inputDate)
+})
+
+async function getSchedule(date) {
     console.log("fetching schedule")
     const response = await fetch(
-        `${API_BASE_URL}/events`
+        `${API_BASE_URL}/events`,
+        {
+        method: "POST", 
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(date)
+        }
     )
 
     if (!response.ok) {
@@ -15,7 +28,8 @@ async function getSchedule() {
     return schedule
 }
 
-function renderStringDate(stringDate) {
+function renderDate(date) {
+    const stringDate = date.toISOString()
     const dateElement = document.getElementById("current-date");
     dateElement.textContent = Date(stringDate)
     // Should check for better quality
@@ -66,7 +80,7 @@ function renderSchedule(schedule) {
     // The first event is always the schedule type, splice it
     let scheduleTypeData = schedule.splice(0, 1)[0]
     scheduleType.textContent = scheduleTypeData.summary
-    renderStringDate(scheduleTypeData.date)
+    renderDate(Date(scheduleTypeData.date))
 
     // Clear previously rendered periods.
     scheduleElement.replaceChildren();
@@ -116,16 +130,7 @@ function getOrdinalSuffix(number) {
     }
 }
 
-async function pollData() {
-  try {
-    const schedule = await getSchedule()
+async function pollData(date) {
+    const schedule = await getSchedule(date)
     renderSchedule(schedule)
-  } catch (error) {
-    console.error('Fetch error:', error);
-  } finally {
-    return
-    setTimeout(pollData, 5000); // Wait 5 seconds after completion
-  }
 }
-
-pollData();
