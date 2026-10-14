@@ -3,7 +3,7 @@ const API_BASE_URL = "http://127.0.0.1:5000"
 // Refreshing the page through the "Load Schedule" button
 const bGetSchedule = document.getElementById("load-schedule")
 const iGetSchedule = document.getElementById("load-schedule-input")
-bGetSchedule.addEventListener(() => {
+bGetSchedule.addEventListener("click", () => {
     const inputDate = Date(iGetSchedule.value)
     pollData(inputDate)
 })
