@@ -1,20 +1,20 @@
 const API_BASE_URL = "http://127.0.0.1:5000"
 
-// async function checkConnection() {
-//     const response = await fetch(
-//         `${API_BASE_URL}/hello`
-//     )
+async function updateSchedule() {
+    console.log("fetching schedule")
+    const response = await fetch(
+        `${API_BASE_URL}/events`
+    )
 
-//     if (!response.ok) {
-//         serverMessage.textContent("Could not connect to the server")
-//         throw new Error("Could not connect to the server")
-//     }
+    if (!response.ok) {
+        serverMessage.textContent("Could not connect to the server")
+        throw new Error("Could not connect to the server")
+    }
 
-//     const message = await response.json()
-//     serverMessage.textContent = message["message"]
-// }
-// bCheckServerConnection.addEventListener("click", checkConnection)
-
+    const schedule = await response.json()
+    console.log(schedule)
+    renderPeriods(schedule)
+}
 
 function renderDate() {
     const dateElement = document.getElementById("current-date");
@@ -73,14 +73,14 @@ function renderPeriods(periods) {
         card.classList.add("period-card");
 
         const heading = document.createElement("h2");
-        heading.textContent = `${period.number}${getOrdinalSuffix(period.number)} Period`;
+        heading.textContent = `${period.summary}${getOrdinalSuffix(period.number)} Period`;
 
         const subject = document.createElement("h3");
         subject.textContent = period.name;
 
         const time = document.createElement("p");
         time.textContent =
-            `${period.startTime} – ${period.endTime}`;
+            `${period.start} – ${period.end}`;
 
         card.append(heading, subject, time);
 
@@ -113,4 +113,14 @@ function getOrdinalSuffix(number) {
     }
 }
 
-renderPeriods(periods);
+async function pollData() {
+  try {
+    await updateSchedule()
+  } catch (error) {
+    console.error('Fetch error:', error);
+  } finally {
+    setTimeout(pollData, 5000); // Wait 5 seconds after completion
+  }
+}
+
+pollData();

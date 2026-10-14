@@ -22,7 +22,6 @@ def parse_event(event):
 async def get_events():
     cal = await IcsCalendarStream.calendar_from_url(ical_url)
     events = []
-    found_range = False
     target_date = "2026-10-20"
 
     # Parse and send today's events to the client
