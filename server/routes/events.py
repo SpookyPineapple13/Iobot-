@@ -33,7 +33,6 @@ async def get_events():
 
         if eparsed["date"] == target_date:
             events.append(eparsed)
-            print("found an event")
         elif events and eparsed["date"] > target_date:
             break
 

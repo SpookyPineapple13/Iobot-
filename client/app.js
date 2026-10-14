@@ -31,7 +31,7 @@ function renderDate(date) {
     console.log(date)
     const stringDate = date.toISOString()
     const dateElement = document.getElementById("current-date");
-    dateElement.textContent = stringDate
+    dateElement.textContent = date
     // Should check for better quality
     //dateElement.textContent = date.toLocaleDateString("en-US", {
     //     weekday: "long",
