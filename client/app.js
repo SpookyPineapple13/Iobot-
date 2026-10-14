@@ -4,18 +4,17 @@ const API_BASE_URL = "http://127.0.0.1:5000"
 const bGetSchedule = document.getElementById("load-schedule")
 const iGetSchedule = document.getElementById("load-schedule-input")
 bGetSchedule.addEventListener("click", () => {
-    const inputDate = Date(iGetSchedule.value)
-    pollData(inputDate)
+    pollData(iGetSchedule.value)
 })
 
-async function getSchedule(date) {
-    console.log("fetching schedule")
+async function getSchedule(dateString) {
+    console.log(`Fetching Schedule for ${dateString}`)
     const response = await fetch(
         `${API_BASE_URL}/events/`,
         {
         method: "POST", 
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(date)
+        body: JSON.stringify({dateRequest: dateString})
         }
     )
 
@@ -29,9 +28,10 @@ async function getSchedule(date) {
 }
 
 function renderDate(date) {
+    console.log(date)
     const stringDate = date.toISOString()
     const dateElement = document.getElementById("current-date");
-    dateElement.textContent = Date(stringDate)
+    dateElement.textContent = stringDate
     // Should check for better quality
     //dateElement.textContent = date.toLocaleDateString("en-US", {
     //     weekday: "long",
@@ -80,7 +80,7 @@ function renderSchedule(schedule) {
     // The first event is always the schedule type, splice it
     let scheduleTypeData = schedule.splice(0, 1)[0]
     scheduleType.textContent = scheduleTypeData.summary
-    renderDate(Date(scheduleTypeData.date))
+    renderDate(new Date(scheduleTypeData.date))
 
     // Clear previously rendered periods.
     scheduleElement.replaceChildren();
@@ -89,7 +89,7 @@ function renderSchedule(schedule) {
         const card = document.createElement("article");
         card.classList.add("period-card");
 
-        const heading = document.createElement("h2");
+        const heading = document.createElement("h2")
         heading.textContent = `${period.summary}${getOrdinalSuffix(period.number)} Period`;
 
         const subject = document.createElement("h3");
@@ -130,7 +130,8 @@ function getOrdinalSuffix(number) {
     }
 }
 
-async function pollData(date) {
-    const schedule = await getSchedule(date)
+async function pollData(dateString) {
+    const schedule = await getSchedule(dateString)
+    console.log(schedule)
     renderSchedule(schedule)
 }
