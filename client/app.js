@@ -11,7 +11,7 @@ bGetSchedule.addEventListener("click", () => {
 async function getSchedule(date) {
     console.log("fetching schedule")
     const response = await fetch(
-        `${API_BASE_URL}/events`,
+        `${API_BASE_URL}/events/`,
         {
         method: "POST", 
         headers: {'Content-Type': 'application/json'},
