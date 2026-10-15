@@ -16,40 +16,29 @@ async function updateCache() {
         {
         method: "POST", 
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({"etag": etag})
+        body: JSON.stringify({"etag": "etag"})
         }
     )
-
-    if (!response.ok) {
-        throw new Error("Could not connect to the server")
-    }
     
     if (response.status == 304) {return} // Do nothing if the cache is modern
+    else if  (!response.ok) {
+        throw new Error("Could not connect to the server")
+    }
 
     // Update the cache
     const responseJson = await response.json()
-    localStorage.setItem("cal", responseJson["events"])
+    localStorage.setItem("cal", JSON.stringify(responseJson["events"]))
     localStorage.setItem("etag", responseJson["etag"])
     return 
 }
 
 async function getSchedule(dateString) {
-    console.log(`Fetching Schedule for ${dateString}`)
-    const response = await fetch(
-        `${API_BASE_URL}/events/`,
-        {
-        method: "POST", 
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({dateRequest: dateString})
-        }
-    )
-
-    if (!response.ok) {
-        serverMessage.textContent("Could not connect to the server")
-        throw new Error("Could not connect to the server")
+    let schedule = []
+    const cal = await JSON.parse(localStorage.getItem("cal"))
+    for (let i=0; i < 10; i++) {
+        const event = cal[i]
+        schedule.push(event)
     }
-
-    const schedule = await response.json()
     return schedule
 }
 
@@ -126,4 +115,5 @@ function getOrdinalSuffix(number) {
 
 async function pollData(dateString) {
     await updateCache()
+    const schedule = await getSchedule()
 }
