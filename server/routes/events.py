@@ -16,32 +16,30 @@ bp = Blueprint("events", __name__, url_prefix="/events")
 ical_url = "https://calendar.google.com/calendar/ical/iolani.org_ds7482aj4fh4uortauf8vuquso%40group.calendar.google.com/public/basic.ics"
 today_schedule = []
 
-# def parse_event_to_dict(event):
-#     event_dict = {
-#         "summary": event.summary,
-#         "date": event.dtstart.strftime("%Y-%m-%d"),
-#         "start": event.start,
-#         "end": event.end,
-#     }
-#     return event_dict
-
 @bp.route("/", methods=["POST"])
 async def get_events():
     # Grab the payload
     data = request.json or {}
-    target_date = data.get("dateRequest")
+    etag = data.get("etag")
 
-    # Grab the calendar - abt 20s
-    cal = cache.get("ics_data")
+    # Tell the client to use its current cache if its etag is up to date
+    if etag == cache.get("etag"):
+        return '', 304
+
+    # Send the server's cached data
+    body = {}
     events = []
+    freshEtag = ""
 
-    # Parse and send today's events to the client
+    # Parse and send the entire parsed calendar to the client
+    cal = cache.get("ics_data")
     for event in cal.timeline:
         eparsed = parse_event_to_dict(event)
+        events.append(eparsed)
+    body["events"] = events
 
-        if eparsed["date"] == target_date:
-            events.append(eparsed)
-        elif events and eparsed["date"] > target_date:
-            break
+    # Send the updated etag
+    freshEtag = cache.get("etag")
+    body["etag"] = freshEtag
 
-    return jsonify(events)
+    return jsonify(body)
