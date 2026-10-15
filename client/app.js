@@ -35,10 +35,14 @@ async function updateCache() {
 async function getSchedule(dateString) {
     let schedule = []
     const cal = await JSON.parse(localStorage.getItem("cal"))
-    for (let i=0; i < 10; i++) {
-        const event = cal[i]
-        schedule.push(event)
-    }
+
+    const iTargetDate = document.getElementById("load-schedule-input")
+    const targetDate = iTargetDate.value
+    console.log(targetDate)
+
+    for (const event of cal) 
+        {if (event["date"] == targetDate) {schedule.push(event)}}
+
     return schedule
 }
 
@@ -116,4 +120,5 @@ function getOrdinalSuffix(number) {
 async function pollData(dateString) {
     await updateCache()
     const schedule = await getSchedule()
+    renderSchedule(schedule)
 }
