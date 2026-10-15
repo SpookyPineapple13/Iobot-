@@ -1,7 +1,8 @@
 import os
+import hashlib
+import asyncio
 
 from flask import Flask, jsonify, request, Response
-import asyncio
 from flask_cors import CORS 
 from flask_caching import Cache
 from ical.calendar_stream import IcsCalendarStream
@@ -50,10 +51,13 @@ def create_app(test_config=None):
 
 async def load_calendar():
     print("Loading calendar")
-    etag = "hello, this is an etag"
     cal = await IcsCalendarStream.calendar_from_url(ical_url)
-    cache.set("ics_data", cal, timeout=0)
-    cache.set("etag", etag, timeout=0)
+    etag = hashlib.md5(str(cal).encode("utf-8")).hexdigest() # MD5 hash
+    print(etag)
+
+    if not (etag == cache.get("etag")):
+        cache.set("ics_data", cal, timeout=0)
+        cache.set("etag", etag, timeout=0)
     
     print("[Background] Updated ICS Cache and ETag")
 
