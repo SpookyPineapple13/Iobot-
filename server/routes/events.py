@@ -10,21 +10,20 @@ import sys
 parent_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(parent_dir))
 
-# Now you can import your file/module from the higher directory
-from app import cache
+from app import cache, parse_event_to_dict
 
 bp = Blueprint("events", __name__, url_prefix="/events")
 ical_url = "https://calendar.google.com/calendar/ical/iolani.org_ds7482aj4fh4uortauf8vuquso%40group.calendar.google.com/public/basic.ics"
 today_schedule = []
 
-def parse_event_to_dict(event):
-    event_dict = {
-        "summary": event.summary,
-        "date": event.dtstart.strftime("%Y-%m-%d"),
-        "start": event.start,
-        "end": event.end,
-    }
-    return event_dict
+# def parse_event_to_dict(event):
+#     event_dict = {
+#         "summary": event.summary,
+#         "date": event.dtstart.strftime("%Y-%m-%d"),
+#         "start": event.start,
+#         "end": event.end,
+#     }
+#     return event_dict
 
 @bp.route("/", methods=["POST"])
 async def get_events():
