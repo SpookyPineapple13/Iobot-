@@ -7,6 +7,32 @@ bGetSchedule.addEventListener("click", () => {
     pollData(iGetSchedule.value)
 })
 
+async function updateCache() {
+    let etag = localStorage.getItem("etag")
+    if (!etag){etag = "none"}
+    
+    const response = await fetch(
+        `${API_BASE_URL}/events/`,
+        {
+        method: "POST", 
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({"etag": etag})
+        }
+    )
+
+    if (!response.ok) {
+        throw new Error("Could not connect to the server")
+    }
+    
+    if (response.status == 304) {return} // Do nothing if the cache is modern
+
+    // Update the cache
+    const responseJson = await response.json()
+    localStorage.setItem("cal", responseJson["events"])
+    localStorage.setItem("etag", responseJson["etag"])
+    return 
+}
+
 async function getSchedule(dateString) {
     console.log(`Fetching Schedule for ${dateString}`)
     const response = await fetch(
@@ -99,7 +125,5 @@ function getOrdinalSuffix(number) {
 }
 
 async function pollData(dateString) {
-    const schedule = await getSchedule(dateString)
-    console.log(schedule)
-    renderSchedule(schedule)
+    await updateCache()
 }
