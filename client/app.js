@@ -25,6 +25,7 @@ async function updateCache() {
         throw new Error("Could not connect to the server")
     }
 
+    console.log("Updated cache")
     // Update the cache
     const responseJson = await response.json()
     localStorage.setItem("cal", JSON.stringify(responseJson["events"]))
@@ -38,26 +39,20 @@ async function getSchedule(dateString) {
 
     const iTargetDate = document.getElementById("load-schedule-input")
     const targetDate = iTargetDate.value
-    console.log(targetDate)
 
     for (const event of cal) 
         {if (event["date"] == targetDate) {schedule.push(event)}}
-
     return schedule
 }
 
 function renderDate(date) {
-    console.log(date)
-    const stringDate = date.toISOString()
     const dateElement = document.getElementById("current-date");
-    dateElement.textContent = date
-    // Should check for better quality
-    //dateElement.textContent = date.toLocaleDateString("en-US", {
-    //     weekday: "long",
-    //     year: "numeric",
-    //     month: "long",
-    //     day: "numeric"
-    // });
+    dateElement.textContent = date.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
 }
 
 function renderSchedule(schedule) {
@@ -81,10 +76,12 @@ function renderSchedule(schedule) {
 
         const subject = document.createElement("h3");
         subject.textContent = period.name;
-
+        
+        const jsStart = new Date(period.start)
+        const jsEnd = new Date(period.end)
         const time = document.createElement("p");
         time.textContent =
-            `${period.start} – ${period.end}`;
+            `${jsStart.toLocaleTimeString()} – ${jsEnd.toLocaleTimeString()}`;
 
         card.append(heading, subject, time);
 
