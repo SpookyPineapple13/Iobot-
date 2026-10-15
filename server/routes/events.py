@@ -4,11 +4,20 @@ from ical.calendar_stream import IcsCalendarStream
 from ical.exceptions import CalendarParseError
 from datetime import datetime, date
 
+import sys
+
+# Get the absolute path of the parent directory (1 level up)
+parent_dir = Path(__file__).resolve().parent.parent
+sys.path.append(str(parent_dir))
+
+# Now you can import your file/module from the higher directory
+from app import cache
+
 bp = Blueprint("events", __name__, url_prefix="/events")
 ical_url = "https://calendar.google.com/calendar/ical/iolani.org_ds7482aj4fh4uortauf8vuquso%40group.calendar.google.com/public/basic.ics"
 today_schedule = []
 
-def parse_event(event):
+def parse_event_to_dict(event):
     event_dict = {
         "summary": event.summary,
         "date": event.dtstart.strftime("%Y-%m-%d"),
@@ -24,12 +33,12 @@ async def get_events():
     target_date = data.get("dateRequest")
 
     # Grab the calendar - abt 20s
-    cal = await IcsCalendarStream.calendar_from_url(ical_url)
+    cal = cache.get("ics_data")
     events = []
 
     # Parse and send today's events to the client
     for event in cal.timeline:
-        eparsed = parse_event(event)
+        eparsed = parse_event_to_dict(event)
 
         if eparsed["date"] == target_date:
             events.append(eparsed)
