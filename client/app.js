@@ -9,6 +9,7 @@ bGetSchedule.addEventListener("click", () => {
 
 async function updateCache() {
     let etag = localStorage.getItem("etag")
+    console.log(etag)
     if (!etag){etag = "none"}
     
     const response = await fetch(
@@ -16,7 +17,7 @@ async function updateCache() {
         {
         method: "POST", 
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({"etag": "etag"})
+        body: JSON.stringify({"etag": etag})
         }
     )
     
