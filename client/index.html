@@ -1,38 +1,30 @@
 <!DOCTYPE html>
-
 <html lang="en-US">
-    <head>
-        <link rel="stylesheet" href="style.css">
-        <script async src="app.js"></script>
-        <title>Opening Page</title>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+    <script defer src="app.js"></script>
+
+    <title>Daily Schedule</title>
+</head>
+
+<body>
+    <header>
+        <h1 id="day-schedule">Loading schedule...</h1>
+        <p id="current-date">Loding date...</p>
+    </header>
+
+    <main>
+        <section id="schedule">
+            <!-- JavaScript will generate the periods here. -->
+        </section>
+    </main>
+
     
-    <body>
+    <input type="date" id="load-schedule-input"> <br>
+    <button id="load-schedule">Load Schedule</button>
 
-        <div style="align-self:self-start;">
-            <p>This is the home page, 
-                where the periods of the actual day will go\
-            </p>
-            <p>Going for the original Iobot style until a 
-                cooler style has been identified
-            </p>
-        </div>
-
-        <div>
-            <ul>
-                <li>1st (day) Period </li>
-                <li>2nd (day) Period</li>
-                <li>3rd (day) Period </li>
-                <li>4th (day) Period</li>
-                <li>5th (day) Period </li>
-                <li>6th (day) Period</li>
-            </ul>
-        </div>
-
-        <div style="align-self:self-start;">
-            <button id="bserver-check">Check Server Connection</button>
-            <p id="server-message"></p>
-        </div>
-        
-    </body>
+</body>
 </html>
