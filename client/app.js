@@ -43,12 +43,14 @@ async function getSchedule(targetDate) {
 
     for (const event of cal) {
         let eventDate = "yyyy-mm-dd" // placeholder
+
+        // schedule days are set to midnight - intended date
         if (event.summary.includes("Schedule")) {
             eventDate = event.date
         }
-        else {
+        else { // compensate for time offset of regular events
             let eventDateObj = new Date(event.start)
-            eventDateObj.setHours(eventDateObj.getHours() - 9)
+            eventDateObj.setHours(eventDateObj.getHours() - 9) // testing 10 vs 9 (GMT to HST conversion)
             eventDate = eventDateObj.toLocaleDateString("en-ZA", {
                 year: "numeric",
                 month: "2-digit",
