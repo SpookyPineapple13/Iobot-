@@ -66,5 +66,6 @@ def parse_event_to_dict(event):
         "summary": event.summary,
         "start": event.dtstart,
         "end": event.dtend,
+        "date": event.dtstart.strftime("%Y-%m-%d"),
     }
     return event_dict
