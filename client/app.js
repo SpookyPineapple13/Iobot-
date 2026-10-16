@@ -34,29 +34,6 @@ async function updateCache() {
     return 
 }
 
-function getHawaiiDate(dateString) {
-    const date = new Date(dateString);
-
-    // Reject invalid date strings
-    if (Number.isNaN(date.getTime())) {
-        console.error("Invalid event date:", dateString);
-        return null;
-    }
-
-    const parts = new Intl.DateTimeFormat("en-US", {
-        timeZone: "Pacific/Honolulu",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-    }).formatToParts(date);
-
-    const values = Object.fromEntries(
-        parts.map(part => [part.type, part.value])
-    );
-
-    return `${values.year}-${values.month}-${values.day}`;
-}
-
 async function getSchedule(targetDate) {
     const schedule = [];
     const cal = JSON.parse(localStorage.getItem("cal") || "[]");
@@ -78,8 +55,6 @@ async function getSchedule(targetDate) {
                 day: "2-digit",
             })
             eventDate = eventDate.replaceAll("/", "-")
-            
-            //eventDate = event.date
         }
     
         if (eventDate === targetDate) {
@@ -100,7 +75,6 @@ function renderDate(date) {
         year: "numeric",
         month: "long",
         day: "numeric",
-        //timeZone: "Pacific/Honolulu"
     });
 }
 
