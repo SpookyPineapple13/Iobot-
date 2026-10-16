@@ -24,7 +24,9 @@ header p {
 
 #schedule {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: 1fr;
+    max-width: 800px;
+    margin: auto;
     gap: 1rem;
 }
 
