@@ -39,8 +39,8 @@ async function getSchedule(targetDate) {
     const cal = JSON.parse(localStorage.getItem("cal") || "[]");
     console.log(`Searching for date: ${targetDate}`);
 
+    let eventDate = "yyyy-mm-dd" // placeholder
     for (const event of cal) {
-        let eventDate = "yyyy-mm-dd" // placeholder
 
         // schedule days are set to midnight - intended date
         if (event.summary.includes("Schedule")) {
@@ -143,7 +143,6 @@ function getOrdinalSuffix(number) {
 
 async function pollData(dateString) {
     await updateCache()
-    console.log("fine")
     const schedule = await getSchedule(dateString)
     renderSchedule(schedule)
 }
