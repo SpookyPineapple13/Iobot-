@@ -9,7 +9,6 @@ bGetSchedule.addEventListener("click", () => {
 
 async function updateCache() {
     let etag = localStorage.getItem("etag")
-    console.log(etag)
     if (!etag){etag = "none"}
     
     const response = await fetch(
@@ -27,6 +26,7 @@ async function updateCache() {
     }
 
     console.log("Updated cache")
+
     // Update the cache
     const responseJson = await response.json()
     localStorage.setItem("cal", JSON.stringify(responseJson["events"]))
@@ -34,29 +34,79 @@ async function updateCache() {
     return 
 }
 
-async function getSchedule(dateString) {
-    let schedule = []
-    const cal = await JSON.parse(localStorage.getItem("cal"))
+function getHawaiiDate(dateString) {
+    const date = new Date(dateString);
 
-    const iTargetDate = document.getElementById("load-schedule-input")
-    const targetDate = iTargetDate.value
+    // Reject invalid date strings
+    if (Number.isNaN(date.getTime())) {
+        console.error("Invalid event date:", dateString);
+        return null;
+    }
 
-    for (const event of cal) 
-        {if (event["date"] == targetDate) {schedule.push(event)}}
-    return schedule
+    const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Pacific/Honolulu",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).formatToParts(date);
+
+    const values = Object.fromEntries(
+        parts.map(part => [part.type, part.value])
+    );
+
+    return `${values.year}-${values.month}-${values.day}`;
+}
+
+async function getSchedule(targetDate) {
+    const schedule = [];
+    const cal = JSON.parse(localStorage.getItem("cal") || "[]");
+    console.log(cal)
+
+    console.log(`Searching for date: ${targetDate}`);
+
+    for (const event of cal) {
+        let eventDate = "yyyy-mm-dd" // placeholder
+        if (event.summary.includes("Schedule")) {
+            eventDate = event.date
+        }
+        else {
+            let eventDateObj = new Date(event.start)
+            eventDateObj.setHours(eventDateObj.getHours() - 9)
+            eventDate = eventDateObj.toLocaleDateString("en-ZA", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+            })
+            eventDate = eventDate.replaceAll("/", "-")
+            
+            //eventDate = event.date
+        }
+    
+        if (eventDate === targetDate) {
+            schedule.push(event);
+        }
+    }
+
+    console.log(schedule);
+    return schedule;
 }
 
 function renderDate(date) {
     const dateElement = document.getElementById("current-date");
+    
+    date.setHours(date.getHours() + 10) // schedule dates are at 00, gets pushed back
     dateElement.textContent = date.toLocaleDateString("en-US", {
         weekday: "long",
         year: "numeric",
         month: "long",
-        day: "numeric"
+        day: "numeric",
+        //timeZone: "Pacific/Honolulu"
     });
 }
 
 function renderSchedule(schedule) {
+    if (schedule.length == 0) {throw new Error("No Schedule was found")}
+
     const scheduleElement = document.getElementById("schedule");
     const scheduleType = document.getElementById("day-schedule")
 
@@ -78,8 +128,9 @@ function renderSchedule(schedule) {
         const subject = document.createElement("h3");
         subject.textContent = period.name;
         
-        const jsStart = new Date(period.start)
-        const jsEnd = new Date(period.end)
+        // display times
+        let jsStart = new Date(period.start); jsStart.setHours(jsStart.getHours() + 9)
+        let jsEnd = new Date(period.end); jsEnd.setHours(jsEnd.getHours() + 9)
         const time = document.createElement("p");
         time.textContent =
             `${jsStart.toLocaleTimeString()} – ${jsEnd.toLocaleTimeString()}`;
@@ -117,6 +168,6 @@ function getOrdinalSuffix(number) {
 
 async function pollData(dateString) {
     await updateCache()
-    const schedule = await getSchedule()
+    const schedule = await getSchedule(dateString)
     renderSchedule(schedule)
 }
