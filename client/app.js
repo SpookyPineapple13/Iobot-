@@ -37,8 +37,6 @@ async function updateCache() {
 async function getSchedule(targetDate) {
     const schedule = [];
     const cal = JSON.parse(localStorage.getItem("cal") || "[]");
-    console.log(cal)
-
     console.log(`Searching for date: ${targetDate}`);
 
     for (const event of cal) {
@@ -50,7 +48,7 @@ async function getSchedule(targetDate) {
         }
         else { // compensate for time offset of regular events
             let eventDateObj = new Date(event.start)
-            eventDateObj.setHours(eventDateObj.getHours() - 9) // testing 10 vs 9 (GMT to HST conversion)
+            eventDateObj.setHours(eventDateObj.getUTCHours() - 10)
             eventDate = eventDateObj.toLocaleDateString("en-ZA", {
                 year: "numeric",
                 month: "2-digit",
@@ -59,12 +57,12 @@ async function getSchedule(targetDate) {
             eventDate = eventDate.replaceAll("/", "-")
         }
     
-        if (eventDate === targetDate) {
+        if (eventDate == targetDate) {
             schedule.push(event);
         }
     }
+    console.log(schedule)
 
-    console.log(schedule);
     return schedule;
 }
 
@@ -105,8 +103,9 @@ function renderSchedule(schedule) {
         subject.textContent = period.name;
         
         // display times
-        let jsStart = new Date(period.start); jsStart.setHours(jsStart.getHours() + 9)
-        let jsEnd = new Date(period.end); jsEnd.setHours(jsEnd.getHours() + 9)
+        let jsStart = new Date(period.start); jsStart.setHours(jsStart.getUTCHours() - 10)
+        let jsEnd = new Date(period.end); jsEnd.setHours(jsEnd.getUTCHours() - 10)
+        
         const time = document.createElement("p");
         time.textContent =
             `${jsStart.toLocaleTimeString()} – ${jsEnd.toLocaleTimeString()}`;
@@ -144,6 +143,7 @@ function getOrdinalSuffix(number) {
 
 async function pollData(dateString) {
     await updateCache()
+    console.log("fine")
     const schedule = await getSchedule(dateString)
     renderSchedule(schedule)
 }
