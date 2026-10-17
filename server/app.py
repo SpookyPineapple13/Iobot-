@@ -9,6 +9,11 @@ from ical.exceptions import CalendarParseError
 from flask_apscheduler import APScheduler
 import requests
 
+"""
+STARTUP COMMAND
+gunicorn "app:create_app() -w 1 --bind 0.0.0.0:$PORT
+"""
+
 cache = Cache()
 scheduler = APScheduler()
 
