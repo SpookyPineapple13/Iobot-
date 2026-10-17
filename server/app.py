@@ -50,16 +50,12 @@ def create_app(test_config=None):
     return app
 
 async def load_calendar():
-    print("Loading calendar")
     cal = await IcsCalendarStream.calendar_from_url(ical_url)
     etag = hashlib.md5(str(cal).encode("utf-8")).hexdigest() # MD5 hash
-    print(etag)
 
     if not (etag == cache.get("etag")):
         cache.set("ics_data", cal, timeout=0)
         cache.set("etag", etag, timeout=0)
-    
-    print("[Background] Updated ICS Cache and ETag")
 
 def parse_event_to_dict(event):
     event_dict = {
