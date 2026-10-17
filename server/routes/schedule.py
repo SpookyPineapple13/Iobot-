@@ -12,7 +12,7 @@ sys.path.append(str(parent_dir))
 
 from app import cache, parse_event_to_dict
 
-bp = Blueprint("events", __name__, url_prefix="/events")
+bp = Blueprint("schedule", __name__, url_prefix="/schedule")
 ical_url = "https://calendar.google.com/calendar/ical/iolani.org_ds7482aj4fh4uortauf8vuquso%40group.calendar.google.com/public/basic.ics"
 today_schedule = []
 

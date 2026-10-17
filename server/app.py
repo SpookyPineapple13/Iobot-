@@ -37,8 +37,8 @@ def create_app(test_config=None):
     os.makedirs(app.instance_path, exist_ok=True)
 
     # register blueprints
-    from routes import events
-    app.register_blueprint(events.bp)
+    from routes import schedule
+    app.register_blueprint(schedule.bp)
 
     # check connection 
     @app.route('/hello')
