@@ -26,7 +26,7 @@ def create_app(test_config=None):
 
     cache.__init__(app) # initialize the cache
     asyncio.run(load_calendar()) # create the initial cache
-    CORS(app) # enable cross-origin sourcing for all routes
+    CORS(app, origins=["https://spookypineapple13.github.io/Iobot-/"]) # enable cross-origin sourcing for all routes
 
     scheduler.init_app(app) # initialize the cache update scheduler
 
