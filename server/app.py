@@ -1,6 +1,5 @@
 import os
 import hashlib
-import asyncio
 
 from flask import Flask, jsonify, request, Response
 from flask_cors import CORS 
@@ -8,6 +7,7 @@ from flask_caching import Cache
 from ical.calendar_stream import IcsCalendarStream
 from ical.exceptions import CalendarParseError
 from flask_apscheduler import APScheduler
+import requests
 
 cache = Cache()
 scheduler = APScheduler()
@@ -25,11 +25,9 @@ def create_app(test_config=None):
     )
 
     cache.init_app(app) # initialize the cache
-    asyncio.run(load_calendar()) # create the initial cache
-    CORS(app, origins=["https://spookypineapple13.github.io/Iobot-/"]) # enable cross-origin sourcing for all routes
-
     scheduler.init_app(app) # initialize the cache update scheduler
-
+    #CORS(app, origins=["https://spookypineapple13.github.io/Iobot-/"]) # enable cross-origin sourcing for all routes
+    CORS(app)
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -51,16 +49,32 @@ def create_app(test_config=None):
             "message": "Affirmative Server Connection"
         })
 
+    # load the initial cache
+    with app.app_context():
+        load_calendar()
+
     scheduler.start()
     return app
 
-async def load_calendar():
-    cal = await IcsCalendarStream.calendar_from_url(ical_url)
-    etag = hashlib.md5(str(cal).encode("utf-8")).hexdigest() # MD5 hash
+def load_calendar():
+    """Synchronously fetches and caches the iCal calendar."""
+    try:
+        response = requests.get(ical_url, timeout=60) # 60 second load-time alloted
+        response.raise_for_status()
+        ics_text = response.text
 
-    if not (etag == cache.get("etag")):
-        cache.set("ics_data", cal, timeout=0)
-        cache.set("etag", etag, timeout=0)
+        # MD5 hash of raw calendar payload
+        etag = hashlib.md5(ics_text.encode("utf-8")).hexdigest()
+
+        # parse raw ICS content synchronously
+        if etag != cache.get("etag"):
+            cal = IcsCalendarStream.calendar_from_ics(ics_text)
+            cache.set("ics_data", cal, timeout=0)
+            cache.set("etag", etag, timeout=0)
+            print("Calendar cache updated successfully.")
+    except Exception as e:
+        print(f"Error loading calendar: {e}")
+
 
 def parse_event_to_dict(event):
     event_dict = {
@@ -71,7 +85,7 @@ def parse_event_to_dict(event):
     }
     return event_dict
 
-# update the cache every 3 minutes
+# Update the cache every 3 minutes
 @scheduler.task('interval', id='update_cache', seconds=180, misfire_grace_time=900)
 def periodic_task():
-    asyncio.run(load_calendar())
+    load_calendar()
