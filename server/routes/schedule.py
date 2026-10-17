@@ -14,7 +14,6 @@ from app import cache, parse_event_to_dict
 
 bp = Blueprint("schedule", __name__, url_prefix="/schedule")
 ical_url = "https://calendar.google.com/calendar/ical/iolani.org_ds7482aj4fh4uortauf8vuquso%40group.calendar.google.com/public/basic.ics"
-today_schedule = []
 
 @bp.route("/", methods=["POST"])
 async def get_events():
