@@ -1,16 +1,107 @@
-
-body {
-    font-family: Arial, sans-serif;
-    color: lightgray;
-    background-color: black;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    display: flex;
+* {
+    box-sizing: border-box;
 }
 
-ul {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+body {
+    margin: 0;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+    background: #f4f5f7;
+    color: #202124;
+}
+
+header {
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    color: #666;
+}
+
+
+/* Styles the container box */
+.load-schedule {
+  background-color: #ffffff;
+  padding: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 25px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Styles the date selector input */
+#load-schedule-input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  border: 1px solid #ccd1d9;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #333333;
+  box-sizing: border-box; /* Ensures padding doesn't affect width */
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+#load-schedule-input:focus {
+  border-color: #4a90e2;
+}
+
+/* Styles the button */
+#load-schedule {
+  width: 100%;
+  padding: 12px;
+  background-color: #4a90e2;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#load-schedule:hover {
+  background-color: #357abd;
+}
+
+
+#schedule {
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: 800px;
+    margin: auto;
+    gap: 1rem;
+}
+
+
+
+.period-card {
+    padding: 1.25rem;
+    border-radius: 10px;
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 5%);
+}
+
+.period-card h2 {
+    margin-top: 0;
+    font-size: 1.15rem;
+}
+
+.period-card h3 {
+    margin-bottom: 0.5rem;
+}
+
+.period-card p {
+    margin: 0.4rem 0;
+    color: #555;
 }

@@ -1,38 +1,31 @@
 <!DOCTYPE html>
-
 <html lang="en-US">
-    <head>
-        <link rel="stylesheet" href="style.css">
-        <script async src="app.js"></script>
-        <title>Opening Page</title>
-    </head>
-    
-    <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <div style="align-self:self-start;">
-            <p>This is the home page, 
-                where the periods of the actual day will go\
-            </p>
-            <p>Going for the original Iobot style until a 
-                cooler style has been identified
-            </p>
-        </div>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="app.js"></script>
 
-        <div>
-            <ul>
-                <li>1st (day) Period </li>
-                <li>2nd (day) Period</li>
-                <li>3rd (day) Period </li>
-                <li>4th (day) Period</li>
-                <li>5th (day) Period </li>
-                <li>6th (day) Period</li>
-            </ul>
-        </div>
+    <title>Daily Schedule</title>
+</head>
 
-        <div style="align-self:self-start;">
-            <button id="bserver-check">Check Server Connection</button>
-            <p id="server-message"></p>
-        </div>
-        
-    </body>
+<body>
+    <header>
+        <h1 id="day-schedule">Loading schedule...</h1>
+        <p id="current-date">Loding date...</p>
+    </header>
+
+    <main>
+        <section id="schedule">
+            <!-- js generated schedule cards go here -->
+        </section>
+    </main>
+
+    <div class="load-schedule">
+        <input type="date" id="load-schedule-input"> <br>
+        <button id="load-schedule">Load Schedule</button>
+    </div>
+
+</body>
 </html>
