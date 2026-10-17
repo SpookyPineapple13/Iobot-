@@ -75,7 +75,7 @@ function renderDate(date) {
         year: "numeric",
         month: "long",
         day: "numeric",
-    });
+    })
 }
 
 function renderSchedule(schedule) {
@@ -141,7 +141,16 @@ function getOrdinalSuffix(number) {
     }
 }
 
+function setScheduleLoading(dateString) {
+    renderDate(new Date(dateString)) // Filler
+    const scheduleElement = document.getElementById("schedule");
+    scheduleElement.replaceChildren()
+    const scheduleType = document.getElementById("day-schedule")
+    scheduleType.textContent = "Loading Schedule..."
+}
+
 async function pollData(dateString) {
+    setScheduleLoading(dateString)
     await updateCache()
     const schedule = await getSchedule(dateString)
     renderSchedule(schedule)
