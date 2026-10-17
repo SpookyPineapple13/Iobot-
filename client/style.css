@@ -22,6 +22,58 @@ header p {
     color: #666;
 }
 
+
+/* Styles the container box */
+.load-schedule {
+  background-color: #ffffff;
+  padding: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 25px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Styles the date selector input */
+#load-schedule-input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  border: 1px solid #ccd1d9;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #333333;
+  box-sizing: border-box; /* Ensures padding doesn't affect width */
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+#load-schedule-input:focus {
+  border-color: #4a90e2;
+}
+
+/* Styles the button */
+#load-schedule {
+  width: 100%;
+  padding: 12px;
+  background-color: #4a90e2;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#load-schedule:hover {
+  background-color: #357abd;
+}
+
+
 #schedule {
     display: grid;
     grid-template-columns: 1fr;
@@ -29,6 +81,8 @@ header p {
     margin: auto;
     gap: 1rem;
 }
+
+
 
 .period-card {
     padding: 1.25rem;

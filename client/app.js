@@ -79,8 +79,6 @@ function renderDate(date) {
 }
 
 function renderSchedule(schedule) {
-    if (schedule.length == 0) {throw new Error("No Schedule was found")}
-
     const scheduleElement = document.getElementById("schedule");
     const scheduleType = document.getElementById("day-schedule")
 
@@ -149,9 +147,31 @@ function setScheduleLoading(dateString) {
     scheduleType.textContent = "Loading Schedule..."
 }
 
+function setScheduleNone(dateString) {
+    renderDate(new Date(dateString)) // Filler
+    const scheduleElement = document.getElementById("schedule");
+    scheduleElement.replaceChildren()
+    const scheduleType = document.getElementById("day-schedule")
+    scheduleType.textContent = "No Data "
+}
+
+
 async function pollData(dateString) {
     setScheduleLoading(dateString)
     await updateCache()
     const schedule = await getSchedule(dateString)
-    renderSchedule(schedule)
+    if (schedule.length == 0) {setScheduleNone(dateString); return}
+    else {renderSchedule(schedule)}
 }
+
+function pollToday(){
+    const now = new Date()
+    let todayString = now.toLocaleDateString("en-ZA", {
+        "year": "numeric",
+        "month": "2-digit",
+        "day": "2-digit"
+    }).replace("/", "-")
+    pollData(todayString)
+}
+
+pollToday()
