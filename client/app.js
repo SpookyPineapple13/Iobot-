@@ -164,9 +164,10 @@ async function pollData(dateString) {
     else {renderSchedule(schedule)}
 }
 
+// NOTE: corresponds to the system loca timezone - shouldn't matter for intended users
 function pollToday(){
     const now = new Date()
-    let todayString = now.toLocaleDateString("en-ZA", {
+    let todayString = now.toLocaleDateString("en-ZA", { // convert to yyyy-mm-dd
         "year": "numeric",
         "month": "2-digit",
         "day": "2-digit"
