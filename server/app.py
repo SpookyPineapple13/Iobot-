@@ -7,8 +7,10 @@ from flask_cors import CORS
 from flask_caching import Cache
 from ical.calendar_stream import IcsCalendarStream
 from ical.exceptions import CalendarParseError
+from flask_apscheduler import APScheduler
 
 cache = Cache()
+scheduler = APScheduler()
 
 ical_url = "https://calendar.google.com/calendar/ical/iolani.org_ds7482aj4fh4uortauf8vuquso%40group.calendar.google.com/public/basic.ics"
 
@@ -25,6 +27,8 @@ def create_app(test_config=None):
     cache.__init__(app) # initialize the cache
     asyncio.run(load_calendar()) # create the initial cache
     CORS(app) # enable cross-origin sourcing for all routes
+
+    scheduler.init_app(app) # initialize the cache update scheduler
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -47,6 +51,7 @@ def create_app(test_config=None):
             "message": "Affirmative Server Connection"
         })
 
+    scheduler.start()
     return app
 
 async def load_calendar():
@@ -65,3 +70,8 @@ def parse_event_to_dict(event):
         "date": event.dtstart.strftime("%Y-%m-%d"),
     }
     return event_dict
+
+# update the cache every 3 minutes
+@scheduler.task('interval', id='update_cache', seconds=180, misfire_grace_time=900)
+def periodic_task():
+    asyncio.run(load_calendar())
