@@ -12,7 +12,7 @@ async function updateCache() {
     if (!etag){etag = "none"}
     
     const response = await fetch(
-        `${API_BASE_URL}/schedule/`,
+        `${API_BASE_URL}/schedule`,
         {
         method: "POST", 
         headers: {'Content-Type': 'application/json'},
