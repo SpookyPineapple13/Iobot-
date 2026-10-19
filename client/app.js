@@ -16,7 +16,7 @@ async function updateCache() {
         {
         method: "POST", 
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({"etag": "etag"})
+        body: JSON.stringify({"etag": etag})
         }
     )
     
@@ -25,6 +25,8 @@ async function updateCache() {
         throw new Error("Could not connect to the server")
     }
 
+    console.log("Updated cache")
+
     // Update the cache
     const responseJson = await response.json()
     localStorage.setItem("cal", JSON.stringify(responseJson["events"]))
@@ -32,32 +34,48 @@ async function updateCache() {
     return 
 }
 
-async function getSchedule(dateString) {
-    let schedule = []
-    const cal = await JSON.parse(localStorage.getItem("cal"))
+async function getSchedule(targetDate) {
+    const schedule = [];
+    const cal = JSON.parse(localStorage.getItem("cal") || "[]");
+    console.log(`Searching for date: ${targetDate}`);
 
-    const iTargetDate = document.getElementById("load-schedule-input")
-    const targetDate = iTargetDate.value
-    console.log(targetDate)
+    let eventDate = "yyyy-mm-dd" // placeholder
+    for (const event of cal) {
 
-    for (const event of cal) 
-        {if (event["date"] == targetDate) {schedule.push(event)}}
+        // schedule days are set to midnight - intended date
+        if (event.summary.includes("Schedule")) {
+            eventDate = event.date
+        }
+        else { // compensate for time offset of regular events
+            let eventDateObj = new Date(event.start)
+            eventDateObj.setHours(eventDateObj.getUTCHours() - 10)
+            eventDate = eventDateObj.toLocaleDateString("en-ZA", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+            })
+            eventDate = eventDate.replaceAll("/", "-")
+        }
+    
+        if (eventDate == targetDate) {
+            schedule.push(event);
+        }
+    }
+    console.log(schedule)
 
-    return schedule
+    return schedule;
 }
 
 function renderDate(date) {
-    console.log(date)
-    const stringDate = date.toISOString()
     const dateElement = document.getElementById("current-date");
-    dateElement.textContent = date
-    // Should check for better quality
-    //dateElement.textContent = date.toLocaleDateString("en-US", {
-    //     weekday: "long",
-    //     year: "numeric",
-    //     month: "long",
-    //     day: "numeric"
-    // });
+    
+    date.setHours(date.getHours() + 10) // schedule dates are at 00, gets pushed back
+    dateElement.textContent = date.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    })
 }
 
 function renderSchedule(schedule) {
@@ -81,10 +99,14 @@ function renderSchedule(schedule) {
 
         const subject = document.createElement("h3");
         subject.textContent = period.name;
-
+        
+        // display times
+        let jsStart = new Date(period.start); jsStart.setHours(jsStart.getUTCHours() - 10)
+        let jsEnd = new Date(period.end); jsEnd.setHours(jsEnd.getUTCHours() - 10)
+        
         const time = document.createElement("p");
         time.textContent =
-            `${period.start} – ${period.end}`;
+            `${jsStart.toLocaleTimeString()} – ${jsEnd.toLocaleTimeString()}`;
 
         card.append(heading, subject, time);
 
@@ -117,8 +139,40 @@ function getOrdinalSuffix(number) {
     }
 }
 
-async function pollData(dateString) {
-    await updateCache()
-    const schedule = await getSchedule()
-    renderSchedule(schedule)
+function setScheduleLoading(dateString) {
+    renderDate(new Date(dateString)) // Filler
+    const scheduleElement = document.getElementById("schedule");
+    scheduleElement.replaceChildren()
+    const scheduleType = document.getElementById("day-schedule")
+    scheduleType.textContent = "Loading Schedule..."
 }
+
+function setScheduleNone(dateString) {
+    renderDate(new Date(dateString)) // Filler
+    const scheduleElement = document.getElementById("schedule");
+    scheduleElement.replaceChildren()
+    const scheduleType = document.getElementById("day-schedule")
+    scheduleType.textContent = "No Data "
+}
+
+
+async function pollData(dateString) {
+    setScheduleLoading(dateString)
+    await updateCache()
+    const schedule = await getSchedule(dateString)
+    if (schedule.length == 0) {setScheduleNone(dateString); return}
+    else {renderSchedule(schedule)}
+}
+
+// NOTE: corresponds to the system loca timezone - shouldn't matter for intended users
+function pollToday(){
+    const now = new Date()
+    let todayString = now.toLocaleDateString("en-ZA", { // convert to yyyy-mm-dd
+        "year": "numeric",
+        "month": "2-digit",
+        "day": "2-digit"
+    }).replace("/", "-")
+    pollData(todayString)
+}
+
+pollToday()

@@ -64,8 +64,8 @@ async def load_calendar():
 def parse_event_to_dict(event):
     event_dict = {
         "summary": event.summary,
+        "start": event.dtstart,
+        "end": event.dtend,
         "date": event.dtstart.strftime("%Y-%m-%d"),
-        "start": event.start,
-        "end": event.end,
     }
     return event_dict
