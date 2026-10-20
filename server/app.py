@@ -31,7 +31,7 @@ def create_app(test_config=None):
 
     cache.init_app(app) # initialize the cache
     scheduler.init_app(app) # initialize the cache update scheduler
-    CORS(app, origins=["https://spookypineapple13.github.io"]) # enable cross-origin sourcing
+    CORS(app) # enable cross-origin sourcing
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
