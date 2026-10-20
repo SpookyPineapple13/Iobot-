@@ -1,98 +1,55 @@
-# Iobot-
+## Iobot
 
-## Installation
+### Goals
+* Quickly obtain information regarding the school schedule for any day the user requests
+* Display the scheduled for the day to be understand a quick glance via a one page layout (no scroll)
+* Be easily updated according to the school’s iCalendar feed
+* Provide customizability to the user’s schedule and create a sleek, modular, and visually appealing display
 
-This assumes you’re working from a computer, that you’re on Windows, and that you’re using *VS Code*. 
-There is documentation(via a quick google search) for everything if you are on Linux or Mac as well.
+### Composition
+* Decoupled - frontend + backend are separate entities (client and server)
+* JavaScript, CSS, and HTML client-side rendering
+* Flask Web API (Python)
 
-Check the dependancies section before setting up the workspace. 
+See the requirements.txt for more information on the modules used by the Server 
 
-1. Clone the repository: <https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository>
-2. Create the Virtual Environment: <https://docs.python.org/3/library/venv.html>
-  - Navigate to the server directory using the terminal
-  - To navigate up the tree: cd..
-  - To navigate to down the tree: cd folder_name
+<br>
 
-Then run: 
-```
-python -m venv .venv
-```
-and then: 
-```
-.venv\Scripts\activate.bat
-```
+## Calendar Fetching, Caching, and Parsing
+***The Server Cache is stored as a Python Dictionary***
 
-The first line creates a python virtual environment(venv), while the second line activates it. When you’re done with a work session, you can deactivate the environment(thought you could leave it running) using: 
+Four libraries are involved in the use of the iCal feed
+* iCal - The standard API for interacting with the iCal text file fetched from the school calendar
+* APScheduler - Used to repeatedly fetch and cache the iCal
+* Flask-Cache - For caching the entirety of the fetched iCal text file
+* MD5 Hashes - Generates the eTags used to identify caches 
 
-```
-deactivate
-```
+### Server-side Caching 
+***The Cache is updated every 3 minutes***
 
-There will be a noticeable difference in your terminal when the venv is activate. An example indicator is green text at the beginning of your prompt lines.
+Every time the cache is updated, MD5 hashes the text contents of the iCal file (an eTag) and compares it to the eTag of the current cache.
 
-By the end, you should have a venv folder nested in the server directory. 
+* If the eTags match, the old cache and eTag is kept
+* If the the eTags differ, the new cache and eTag are stored
 
-3. Double check the link between the client and server
-  - PREREQ: VS Code Live Preview extension
-  - Run this to start the app: 
-    ```
-    flask run
-    ```
-  - In the client directory, right click index.html, and click something along the lines of “show preview”
-    - This should open a panel(on the right for me) with a display of the page 
-  - Click the button at the bottom of the page
-  - By the end of this step, you should see the page with a message indicating that the client and server are successfully connected/are communicating with each other
+### Client-side Caching
+***The client caches using the localStorage Web API as a JavaScript Object*** <br>
+***The server parses its cache into a JSON before sending it to the client***
 
-I didn’t test this on any device other than my own… So if you run into any issues, then cool, yay, troubleshooting time. 
+The client requests and stores 2 things from the server
+* The last cache it was told to use (by the server)
+* The eTag of its current cache
 
-### Dependancies 
+Every time the client requests a schedule from a specified date, it sends the eTag in a POST request. 
+* In the event that the eTag differ, the server sends its cache and eTag over for the client to store and use.
+* Matching client and server eTags are responded to with a 304 code, to which the client interprets as a go ahead to use its current cache
 
-#### Setting up the workspace
+This prevents unnecessary cache transactions between the server and client, decreasing load speed.
 
-- Installing Python: <https://innovationspace.ansys.com/courses/courses/intro-to-python/lessons/prerequisites-installation-of-python/>
-- Installing Git: <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>
-- Setting up GitHub in VS Code: <https://code.visualstudio.com/docs/sourcecontrol/github>
+## Local Development
+1. Clone
+2. Setup venv
+3. Pip install requirements.txt
+4. Open CORS to your preferred port (server/app.py)
 
-Optional, but I recommend: 
-- VS Code Live Preview Extension - Allows you to see a preview the site from VS Code
-- VS Code Pylance or other Python extensions - For autocomplete and warning-avoidance
-
-#### Libraries 
-
-The web server has two main dependancies: 
-- Flask - The Web API
-- Flask-CORS - Flask extension for linking clients to the server with a different origin
-
-In your activated venv, run: 
-```
-pip install flask 
-pip install flask-cors
-```
-
-If you would like to double check that the dependancies are downloaded, you can run:
-```
-pip list
-```
-
-#### Recommended References and Notes 
-
-***Flask*** <br>
-Documentation: <https://flask.palletsprojects.com/en/stable/> 
-
-Smol kine warning:
-The Flask tutorial uses a monolithic structure, meaning the entire web app is in one directory, and the server compiles the html files and sends them to the client. 
-
-The project is currently decoupled, where the server and client are two distinct entities(the two major folders) that talk to each other. Instead of sending the html files to the client, the server is in charge of taking in client requests, and sending data(usually in the form of JSON data) back to the client. 
-
-One of decoupling’s is that the page updates dynamically, meaning it doesn’t have to refresh to receive updates. With a monolithic architecture, the client has to update the entire page when it receives a newly composed html file from the server. In a decoupled architecture, the client receives data from the server, and updates that page itself using that data. 
-
-Web App Architectures: <https://crystallize.com/answers/tech-dev/monolith-vs-decoupled-vs-headless>
-
-As of now, the project is small enough that we could consolidate into a monolithic structure if we wanted to, but a decoupled workflow is easier for collaboration and makes working on the client and server distinct(it also sounds better in my opinion). 
-
-***Front-End Tech***
-The MDN curriculum has a lot of good tutorials and articles on CSS, HTML, and JS interactivity. 
-
-Basic Website Development Tutorial: <https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Your_first_website><br>
-Asynchronous JavaScript: <https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Async_JS><br>
-Good Info on Server-side vs Client-side Programming: <https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/First_steps><br>
+I’m too lazy to create the guide. Lemme know.
