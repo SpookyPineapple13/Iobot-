@@ -7,10 +7,10 @@ from datetime import datetime, date
 import sys
 
 # Get the absolute path of the parent directory (1 level up)
-parent_dir = Path(__file__).resolve().parent.parent
+parent_dir = Path(__file__).resolve().parent
 sys.path.append(str(parent_dir))
 
-from server.app import cache, parse_event_to_dict
+from app import cache, parse_event_to_dict
 
 bp = Blueprint("schedule", __name__, url_prefix="/schedule")
 ical_url = "https://calendar.google.com/calendar/ical/iolani.org_ds7482aj4fh4uortauf8vuquso%40group.calendar.google.com/public/basic.ics"
