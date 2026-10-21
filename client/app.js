@@ -46,13 +46,13 @@ async function getSchedule(targetDate) {
         if (event.summary.includes("Schedule")) {
             eventDate = event.date
         }
-        else { // compensate for time offset of regular events
+        else {
             let eventDateObj = new Date(event.start)
-            eventDateObj.setHours(eventDateObj.getUTCHours() - 10)
             eventDate = eventDateObj.toLocaleDateString("en-ZA", {
                 year: "numeric",
                 month: "2-digit",
                 day: "2-digit",
+                timeZone: "Pacific/Honolulu"
             })
             eventDate = eventDate.replaceAll("/", "-")
         }
@@ -69,12 +69,13 @@ async function getSchedule(targetDate) {
 function renderDate(date) {
     const dateElement = document.getElementById("current-date");
     
-    date.setHours(date.getHours() + 10) // schedule dates are at 00, gets pushed back
+    date.setUTCHours(date.getUTCHours() + 10) // schedule dates are at 00, gets pushed back
     dateElement.textContent = date.toLocaleDateString("en-US", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
+        timeZone: "Pacific/Honolulu"
     })
 }
 
@@ -101,12 +102,12 @@ function renderSchedule(schedule) {
         subject.textContent = period.name;
         
         // display times
-        let jsStart = new Date(period.start); jsStart.setHours(jsStart.getUTCHours() - 10)
-        let jsEnd = new Date(period.end); jsEnd.setHours(jsEnd.getUTCHours() - 10)
+        let jsStart = new Date(period.start); 
+        let jsEnd = new Date(period.end);
         
         const time = document.createElement("p");
         time.textContent =
-            `${jsStart.toLocaleTimeString([], {timeStyle:"short"})} – ${jsEnd.toLocaleTimeString([], {timeStyle:"short"})}`;
+            `${jsStart.toLocaleTimeString([], {timeZone: "Pacific/Honolulu", timeStyle:"short"})} – ${jsEnd.toLocaleTimeString([], {timeZone: "Pacific/Honolulu", timeStyle:"short"})}`;
 
         card.append(heading, subject, time);
 
