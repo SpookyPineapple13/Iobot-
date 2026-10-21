@@ -1,4 +1,5 @@
 const API_BASE_URL = "http://127.0.0.1:5000"
+let connectionStatus = false
 
 // Refreshing the page through the "Load Schedule" button
 const bGetSchedule = document.getElementById("load-schedule")
@@ -8,6 +9,7 @@ bGetSchedule.addEventListener("click", () => {
 })
 
 async function updateCache() {
+    console.log("Checking Cache")
     let etag = localStorage.getItem("etag")
     if (!etag){etag = "none"}
     
@@ -20,7 +22,7 @@ async function updateCache() {
         }
     )
     
-    if (response.status == 304) {return} // Do nothing if the cache is modern
+    if (response.status == 304) {console.log("Cache is modern"); return} // Do nothing if the cache is modern
     else if  (!response.ok) {
         throw new Error("Could not connect to the server")
     }
@@ -169,11 +171,38 @@ async function pollData(dateString) {
 function pollToday(){
     const now = new Date()
     let todayString = now.toLocaleDateString("en-ZA", { // convert to yyyy-mm-dd
-        "year": "numeric",
-        "month": "2-digit",
-        "day": "2-digit"
-    }).replace("/", "-")
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        timeZone: "Pacific/Honolulu"
+    }).replaceAll("/", "-")
     pollData(todayString)
 }
 
-pollToday()
+// Check for connection, then poll today
+function checkConnection(){
+    const scheduleType = document.getElementById("day-schedule")
+    const responsePromise = fetch(`${API_BASE_URL}/hello`);
+
+    responsePromise
+        .then((res) => {
+            
+            if (!res.ok) {
+                connectionStatus = false;
+                scheduleType.textContent = "Could not connect to Server";
+                throw new Error("Could not connect to the server");
+            }
+            
+            connectionStatus = true;
+            scheduleType.textContent = "Connected to Server";
+        })
+        .catch((error) => {console.error(error);});
+    }
+
+async function main(){
+    checkConnection()
+    await updateCache()
+    pollToday()
+}
+
+main()
