@@ -1,0 +1,155 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px 28px;
+    font-family: Arial, sans-serif;
+    background: #f4f5f7;
+    color: #202124;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+        "header header"
+        "schedule controls";
+    gap: 20px 28px;
+    align-items: start;
+}
+
+/* Header: spans the entire top */
+header {
+    grid-area: header;
+    margin: 0;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0 0 6px;
+    font-size: 1.8rem;
+}
+
+header p {
+    margin: 0;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+/* Schedule: takes all remaining horizontal space */
+#schedule {
+    grid-area: schedule;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    align-content: start;
+    min-width: 0;
+}
+
+/* Individual period cards */
+.period-card {
+    padding: 16px 18px;
+    border-radius: 10px;
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 5%);
+}
+
+.period-card h2 {
+    margin: 0 0 6px;
+    font-size: 1.1rem;
+}
+
+.period-card h3 {
+    margin: 0 0 6px;
+    font-size: 1rem;
+}
+
+.period-card p {
+    margin: 4px 0;
+    color: #555;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Date selector: compact card on the right */
+.load-schedule {
+    grid-area: controls;
+    align-self: start;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 16px;
+
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgb(0 0 0 / 5%);
+}
+
+#load-schedule-input {
+    width: 100%;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid #ccd1d9;
+    border-radius: 6px;
+    font-size: 16px;
+    color: #333;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+#load-schedule-input:focus {
+    border-color: #4a90e2;
+}
+
+#load-schedule {
+    width: 100%;
+    padding: 12px;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#load-schedule:hover {
+    background: #357abd;
+}
+
+/* Portrait iPad and smaller screens */
+@media (max-width: 700px) {
+    body {
+        padding: 16px;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto auto;
+        grid-template-areas:
+            "header"
+            "controls"
+            "schedule";
+        gap: 16px;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .load-schedule {
+        max-width: 360px;
+    }
+
+    .period-card {
+        padding: 12px 14px;
+    }
+}
+
+
