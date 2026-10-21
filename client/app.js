@@ -106,7 +106,7 @@ function renderSchedule(schedule) {
         
         const time = document.createElement("p");
         time.textContent =
-            `${jsStart.toLocaleTimeString()} – ${jsEnd.toLocaleTimeString()}`;
+            `${jsStart.toLocaleTimeString([], {timeStyle:"short"})} – ${jsEnd.toLocaleTimeString([], {timeStyle:"short"})}`;
 
         card.append(heading, subject, time);
 
