@@ -98,7 +98,7 @@ function renderSchedule(schedule) {
         card.classList.add("period-card");
 
         const heading = document.createElement("h2")
-        heading.textContent = `${period.summary}${getOrdinalSuffix(period.number)} Period`;
+        heading.textContent = `${period.summary};
 
         const subject = document.createElement("h3");
         subject.textContent = period.name;
