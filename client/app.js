@@ -202,9 +202,11 @@ function pollToday(){
     pollData(todayString)
 }
 
-function displayCouldNotConnect() {
+function displayCouldNotConnect(error) {
     const scheduleType = document.getElementById("day-schedule")
+    const dateElement = document.getElementById("current-date");
     scheduleType.textContent = "Could not connect to the Server"
+    dateElement.textContent = error
 }
 
 function checkConnectionUI() {
@@ -226,14 +228,14 @@ function checkConnection(){
             
             if (!res.ok) {
                 connectionStatus = false;
-                scheduleType.textContent = "Could not connect to Server";
+                displayCouldNotConnect()
                 throw new Error("Could not connect to the server");
             }
             
             connectionStatus = true;
             scheduleType.textContent = "Connected to Server";
         })
-        .catch((error) => {console.error(error); displayCouldNotConnect()});
+        .catch((error) => {console.error(error); displayCouldNotConnect(error)});
     }
 
 async function main(){
