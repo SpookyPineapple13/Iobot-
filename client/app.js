@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:5000"
+const API_BASE_URL = "https://iobot-6mcg.onrender.com"
 let connectionStatus = false
 
 class InputCard extends HTMLElement {
@@ -202,8 +202,22 @@ function pollToday(){
     pollData(todayString)
 }
 
+function displayCouldNotConnect() {
+    const scheduleType = document.getElementById("day-schedule")
+    scheduleType.textContent = "Could not connect to the Server"
+}
+
+function checkConnectionUI() {
+    const scheduleType = document.getElementById("day-schedule")
+    const dateElement = document.getElementById("current-date");
+
+    scheduleType.textContent = "Connecting to Server"
+    dateElement.textContent = "Checking Cache"
+}
+
 // Check for connection, then poll today
 function checkConnection(){
+    checkConnectionUI()
     const scheduleType = document.getElementById("day-schedule")
     const responsePromise = fetch(`${API_BASE_URL}/hello`);
 
@@ -219,13 +233,15 @@ function checkConnection(){
             connectionStatus = true;
             scheduleType.textContent = "Connected to Server";
         })
-        .catch((error) => {console.error(error);});
+        .catch((error) => {console.error(error); displayCouldNotConnect()});
     }
 
 async function main(){
     checkConnection()
-    await updateCache()
-    pollToday()
+    if (connectionStatus) {
+        await updateCache()
+        pollToday()
+    }
 }
 
 main()
