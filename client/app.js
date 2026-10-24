@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:5000"
+const API_BASE_URL = "https://humble-space-cod-4qg7w6wpwqqp36pg-5000.app.github.dev"
 let connectionStatus = false
 
 class InputCard extends HTMLElement {
@@ -182,15 +182,13 @@ function getOrdinalSuffix(number) {
 }
 
 function setScheduleLoading(dateString) {
-    renderDate(new Date(dateString)) // Filler
-    const scheduleElement = document.getElementById("schedule");
-    scheduleElement.replaceChildren()
+    renderDate(new Date(dateString.replaceAll("-", "/"))) // Filler
     const scheduleType = document.getElementById("day-schedule")
     scheduleType.textContent = "Loading Schedule..."
 }
 
 function setScheduleNone(dateString) {
-    renderDate(new Date(dateString)) // Filler
+    renderDate(new Date(dateString.replaceAll("-", "/"))) // Filler
     const scheduleElement = document.getElementById("schedule");
     scheduleElement.replaceChildren()
     const scheduleType = document.getElementById("day-schedule")
@@ -255,12 +253,6 @@ async function checkConnection(){
             console.error(error)
             connectionStatus = false
         })
-    
-    //
-    if (wasOffline && connectionStatus == true) {
-        await updateCache()
-        pollData(iGetSchedule.value)
-    }
 }
 
 async function main(){
