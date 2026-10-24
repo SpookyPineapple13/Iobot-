@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://iobot-6mcg.onrender.com"
+const API_BASE_URL = "http://127.0.0.1:5000"
 let connectionStatus = false
 
 class InputCard extends HTMLElement {
@@ -32,32 +32,48 @@ bGetSchedule.addEventListener("click", () => {
     pollData(iGetSchedule.value)
 })
 
-async function updateCache() {
+function updateCache() {
     console.log("Checking Cache")
     let etag = localStorage.getItem("etag")
     if (!etag){etag = "none"}
     
-    const response = await fetch(
+    const promise = fetch(
         `${API_BASE_URL}/schedule/`,
         {
         method: "POST", 
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({"etag": etag})
         }
-    )
-    
-    if (response.status == 304) {console.log("Cache is modern"); return} // Do nothing if the cache is modern
-    else if  (!response.ok) {
-        throw new Error("Could not connect to the server")
-    }
+    ).then(res => {
+        if (res.status == 304) { // Do nothing if the cache is modern 
+            throw new Error("MODERN")
+        } 
+        else if  (!res.ok) {
+            displayCouldNotConnect()
+            console.log(res.status)
+            throw new Error("Could not connect to the server")
+        }
+        return res.json()
+    }).then(data => { // Update the cache
 
-    console.log("Updated cache")
+        localStorage.setItem("cal", JSON.stringify(data["events"]))
+        localStorage.setItem("etag", data["etag"])
 
-    // Update the cache
-    const responseJson = await response.json()
-    localStorage.setItem("cal", JSON.stringify(responseJson["events"]))
-    localStorage.setItem("etag", responseJson["etag"])
-    return 
+        const cacheStatus = document.getElementById("cache-status");
+        cacheStatus.textContent = "Calendar is Synced"
+        console.log("Cache updated")
+    }).catch(err => {
+        if (err.message == "MODERN") {
+            const cacheStatus = document.getElementById("cache-status");
+            cacheStatus.textContent = "Calendar is Synced"
+            console.log("Cache is modern")
+        }
+        else {
+            const cacheStatus = document.getElementById("cache-status");
+            cacheStatus.textContent = "Cache may be outdated"
+            console.log("Could not update the cache: " + err.message)
+        }
+    })
 }
 
 async function getSchedule(targetDate) {
@@ -203,10 +219,10 @@ function pollToday(){
 }
 
 function displayCouldNotConnect(error) {
-    const scheduleType = document.getElementById("day-schedule")
-    const dateElement = document.getElementById("current-date");
-    scheduleType.textContent = "Could not connect to the Server"
-    dateElement.textContent = error
+    const status = document.getElementById("connection-status")
+    const cacheStatus = document.getElementById("cache-status");
+    status.textContent = "Could not connect to the Server"
+    cacheStatus.textContent = error
 }
 
 function checkConnectionUI() {
@@ -214,36 +230,38 @@ function checkConnectionUI() {
     const dateElement = document.getElementById("current-date");
 
     scheduleType.textContent = "Connecting to Server"
-    dateElement.textContent = "Checking Cache"
+    dateElement.textContent = "Downloading Calendar"
 }
 
 // Check for connection, then poll today
-function checkConnection(){
+function startupConnection(){
     checkConnectionUI()
-    const scheduleType = document.getElementById("day-schedule")
-    const responsePromise = fetch(`${API_BASE_URL}/hello`);
+    const status = document.getElementById("connection-status")
+    const responsePromise = fetch(`${API_BASE_URL}/hello`)
 
     responsePromise
         .then((res) => {
             
             if (!res.ok) {
-                connectionStatus = false;
                 displayCouldNotConnect()
-                throw new Error("Could not connect to the server");
+                connectionStatus = false
+                throw new Error("could not connect to the server")
             }
-            
-            connectionStatus = true;
-            scheduleType.textContent = "Connected to Server";
+            status.textContent = "Connected to Server"
+            console.log("connected to server")
+            connectionStatus = true
         })
-        .catch((error) => {console.error(error); displayCouldNotConnect(error)});
-    }
+        .catch((error) => {
+            displayCouldNotConnect(error)
+            console.error(error)
+            connectionStatus = false
+        });
+}
 
 async function main(){
-    checkConnection()
-    if (connectionStatus) {
-        await updateCache()
-        pollToday()
-    }
+    startupConnection()
+    updateCache()
+    pollToday()
 }
 
 main()

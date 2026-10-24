@@ -11,10 +11,11 @@ body {
     color: #202124;
 
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 260px;
-    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr 1fr;
     grid-template-areas:
         "header header"
+        "schedule controls"
         "schedule controls";
     gap: 20px 28px;
     align-items: start;
