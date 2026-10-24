@@ -32,36 +32,37 @@ bGetSchedule.addEventListener("click", () => {
     pollData(iGetSchedule.value)
 })
 
-function updateCache() {
+async function updateCache() {
     console.log("Checking Cache")
     let etag = localStorage.getItem("etag")
     if (!etag){etag = "none"}
     
-    const promise = fetch(
+    return fetch(
         `${API_BASE_URL}/schedule/`,
         {
         method: "POST", 
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({"etag": etag})
         }
+    
     ).then(res => {
-        if (res.status == 304) { // Do nothing if the cache is modern 
-            throw new Error("MODERN")
-        } 
+        if (res.status == 304) {throw new Error("MODERN")} // Do nothing if the cache is modern 
         else if  (!res.ok) {
             displayCouldNotConnect()
             console.log(res.status)
-            throw new Error("Could not connect to the server")
+            throw new Error("FAILED_CONNECTION")
         }
         return res.json()
-    }).then(data => { // Update the cache
-
+    
+    // Update the cache
+    }).then(data => {
         localStorage.setItem("cal", JSON.stringify(data["events"]))
         localStorage.setItem("etag", data["etag"])
 
         const cacheStatus = document.getElementById("cache-status");
         cacheStatus.textContent = "Calendar is Synced"
         console.log("Cache updated")
+
     }).catch(err => {
         if (err.message == "MODERN") {
             const cacheStatus = document.getElementById("cache-status");
@@ -103,8 +104,6 @@ async function getSchedule(targetDate) {
             schedule.push(event);
         }
     }
-    console.log(schedule)
-
     return schedule;
 }
 
@@ -201,13 +200,12 @@ function setScheduleNone(dateString) {
 
 async function pollData(dateString) {
     setScheduleLoading(dateString)
-    await updateCache()
     const schedule = await getSchedule(dateString)
     if (schedule.length == 0) {setScheduleNone(dateString); return}
     else {renderSchedule(schedule)}
 }
 
-// NOTE: corresponds to the system loca timezone - shouldn't matter for intended users
+// NOTE: corresponds to the system local timezone - shouldn't matter for intended users
 function pollToday(){
     const now = new Date()
     let todayString = now.toLocaleDateString("en-ZA", { // convert to yyyy-mm-dd
@@ -234,12 +232,12 @@ function checkConnectionUI() {
 }
 
 // Check for connection, then poll today
-function startupConnection(){
+async function checkConnection(){
     checkConnectionUI()
     const status = document.getElementById("connection-status")
-    const responsePromise = fetch(`${API_BASE_URL}/hello`)
-
-    responsePromise
+    const wasOffline = !connectionStatus
+    
+    await fetch(`${API_BASE_URL}/hello`)
         .then((res) => {
             
             if (!res.ok) {
@@ -251,16 +249,23 @@ function startupConnection(){
             console.log("connected to server")
             connectionStatus = true
         })
+
         .catch((error) => {
             displayCouldNotConnect(error)
             console.error(error)
             connectionStatus = false
-        });
+        })
+    
+    //
+    if (wasOffline && connectionStatus == true) {
+        await updateCache()
+        pollData(iGetSchedule.value)
+    }
 }
 
 async function main(){
-    startupConnection()
-    updateCache()
+    checkConnection()
+    await updateCache()
     pollToday()
 }
 
