@@ -16,15 +16,14 @@ body {
     grid-template-areas:
         "header header"
         "schedule rightside";
-    gap: 20px 28px;
-    align-items: start;
+    column-gap: 20px;
 }
 
 /* Header: spans the entire top */
 header {
     grid-area: header;
-    margin: 0;
     text-align: center;
+    margin-bottom: 20px;
 }
 
 header h1 {
@@ -131,12 +130,10 @@ header p {
 .status {
     grid-area: status;
     align-items: start;
-    gap: 10px;
-    padding: 10px;
-    margin: 3px;
     
-    background: white;
-    border-radius: 6px;
+    align-items: end;
+    text-align: end;
+    margin-top: auto;
 }
 
 .week-schedule {
@@ -164,8 +161,7 @@ header p {
 
     display: flex;
     flex-direction: column;
-    gap: 8px
-    
+    gap: 8px;
 }
 
 
