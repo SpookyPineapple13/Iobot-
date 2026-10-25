@@ -33,7 +33,10 @@ bGetSchedule.addEventListener("click", () => {
 })
 
 async function updateCache() {
+    const cacheStatus = document.getElementById("cache-status");
+    cacheStatus.textContent = "Downloading..."
     console.log("Checking Cache")
+
     let etag = localStorage.getItem("etag")
     if (!etag){etag = "none"}
     
@@ -59,18 +62,16 @@ async function updateCache() {
         localStorage.setItem("cal", JSON.stringify(data["events"]))
         localStorage.setItem("etag", data["etag"])
 
-        const cacheStatus = document.getElementById("cache-status");
+        
         cacheStatus.textContent = "Calendar is Synced"
         console.log("Cache updated")
 
     }).catch(err => {
         if (err.message == "MODERN") {
-            const cacheStatus = document.getElementById("cache-status");
             cacheStatus.textContent = "Calendar is Synced"
             console.log("Cache is modern")
         }
         else {
-            const cacheStatus = document.getElementById("cache-status");
             cacheStatus.textContent = "Cache may be outdated"
             console.log("Could not update the cache: " + err.message)
         }
