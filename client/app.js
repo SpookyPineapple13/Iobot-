@@ -77,6 +77,8 @@ async function updateCache() {
     })
 }
 
+const rewindFlags = ["period", "lunch", "break", 
+    "homeroom", "meeting", "chapel, assembly"]
 async function getSchedule(targetDate) {
     const schedule = [];
     const cal = JSON.parse(localStorage.getItem("cal") || "[]");
@@ -85,8 +87,10 @@ async function getSchedule(targetDate) {
     let eventDate = "yyyy-mm-dd" // placeholder
     for (const event of cal) {
 
-        // schedule days are set to midnight - intended date
-        if (event.summary.includes("Schedule")) {
+       // schedule days are set to midnight - intended date
+        const title = event.summary
+        if (title.includes("Schedule") || title.includes("Holiday")
+            || title.includes("BREAK") || title.includes("HOLIDAY")) {
             eventDate = event.date
         }
         else {
