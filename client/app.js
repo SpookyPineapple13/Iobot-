@@ -202,7 +202,8 @@ function setScheduleNone(dateString) {
 
 
 async function pollData(dateString) {
-    setScheduleLoading(dateString)
+    setScheduleLoading(dateString) // relies on the next line to load
+    await checkConnection(false) // check for possible inconsistencies
     const schedule = await getSchedule(dateString)
     if (schedule.length == 0) {setScheduleNone(dateString); return}
     else {renderSchedule(schedule)}
@@ -235,12 +236,12 @@ function checkConnectionUI() {
 }
 
 // Check for connection, then poll today
-async function checkConnection(){
-    checkConnectionUI()
+function checkConnection(ui=true){
+    if(ui){checkConnectionUI()}
     const status = document.getElementById("connection-status")
     const wasOffline = !connectionStatus
     
-    await fetch(`${API_BASE_URL}/hello`)
+    return fetch(`${API_BASE_URL}/hello`)
         .then((res) => {
             
             if (!res.ok) {
