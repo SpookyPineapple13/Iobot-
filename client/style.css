@@ -11,20 +11,19 @@ body {
     color: #202124;
 
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 260px;
-    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto auto auto;
     grid-template-areas:
         "header header"
-        "schedule controls";
-    gap: 20px 28px;
-    align-items: start;
+        "schedule rightside";
+    column-gap: 20px;
 }
 
 /* Header: spans the entire top */
 header {
     grid-area: header;
-    margin: 0;
     text-align: center;
+    margin-bottom: 20px;
 }
 
 header h1 {
@@ -44,7 +43,8 @@ header p {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
-    align-content: start;
+    align-items: start;
+    align-self: start;
     min-width: 0;
 }
 
@@ -78,10 +78,11 @@ header p {
 .load-schedule {
     grid-area: controls;
     align-self: start;
+    align-items: center;
 
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 3px;
 
     width: 100%;
     min-width: 0;
@@ -94,7 +95,7 @@ header p {
 }
 
 #load-schedule-input {
-    width: 100%;
+    width: 95%;
     min-width: 0;
     padding: 10px;
     border: 1px solid #ccd1d9;
@@ -126,30 +127,39 @@ header p {
     background: #357abd;
 }
 
-/* Portrait iPad and smaller screens */
-@media (max-width: 700px) {
-    body {
-        padding: 16px;
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: auto auto auto;
-        grid-template-areas:
-            "header"
-            "controls"
-            "schedule";
-        gap: 16px;
-    }
-
-    header h1 {
-        font-size: 1.5rem;
-    }
-
-    .load-schedule {
-        max-width: 360px;
-    }
-
-    .period-card {
-        padding: 12px 14px;
-    }
+.status {
+    grid-area: status;
+    align-items: start;
+    
+    align-items: end;
+    text-align: end;
+    margin-top: auto;
 }
 
+.week-schedule {
+    grid-area: week;
+    align-items: start;
+    padding: 10px;
+    margin: 3px;
 
+    background: white;
+    border-radius: 6px;
+}
+
+.messages {
+    grid-area: messages;
+    align-items: start;
+    padding: 10px;
+    margin: 3px;
+    
+    background: white;
+    border-radius: 6px;
+}
+
+#right-sidebar {
+    grid-area: rightside;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
