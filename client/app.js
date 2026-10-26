@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://humble-space-cod-4qg7w6wpwqqp36pg-5000.app.github.dev"
+const API_BASE_URL = "https://supernatural-monster-77r9pwpjpp7xcxw9q-5000.app.github.dev/"
 let connectionStatus = false
 
 class InputCard extends HTMLElement {
