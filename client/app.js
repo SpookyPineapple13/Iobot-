@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:5000"
+const API_BASE_URL = "https://humble-space-cod-4qg7w6wpwqqp36pg-5000.app.github.dev"
 let connectionStatus = false
 
 class InputCard extends HTMLElement {
@@ -172,8 +172,9 @@ function getWeek(date) {
 }
 
 function getWeekday(date) {
-    const weekday = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-    console.log(weekday)
+    const weekday = date.toLocaleDateString('en-US', {
+        weekday: 'long', 
+        timeZone: "UTC" }).toLowerCase();
     return weekday
 }
 
