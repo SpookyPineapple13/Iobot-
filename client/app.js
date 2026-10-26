@@ -178,12 +178,30 @@ function getWeekday(date) {
     return weekday
 }
 
+function getWeekdayAbrv(weekday) {
+    return weekday.charAt(0).toUpperCase() + weekday.slice(1, 3)
+}
+
 function renderWeek(week) {
+    const dayElements = document.getElementById("week-schedule").children
+
+    for (const element of dayElements) {
+        element.setAttribute("fill", "none")
+    }
+
     for (const event of week) {
         const eventDate = new Date(event.start)
         const weekday = getWeekday(eventDate)
         const element = document.getElementById(weekday)
-        element.textContent = weekday.slice(0, 3).charAt(0).toUpperCase() + ". " + event.summary
+        element.setAttribute("fill", "full")
+
+        element.textContent = getWeekdayAbrv(weekday) + ". " + event.summary
+    }
+
+    for (const element of dayElements) {
+        if (element.getAttribute("fill") == "none") {
+            element.textContent = getWeekdayAbrv(element.textContent) + ". " + "No Data"
+        }
     }
 }
 
