@@ -1,29 +1,5 @@
-const API_BASE_URL = "https://supernatural-monster-77r9pwpjpp7xcxw9q-5000.app.github.dev/"
+const API_BASE_URL = "https://humble-space-cod-4qg7w6wpwqqp36pg-5000.app.github.dev"
 let connectionStatus = false
-
-class InputCard extends HTMLElement {
-  connectedCallback() {
-    const title = this.getAttribute('title') || 'Input Title';
-
-    this.innerHTML = `
-      <div class="preference-card">
-        <h3>${title}</h3>
-        <label for="${title}">Name: </label>
-        <input type="text" id="${title}" name="${title}">
-        
-        <br>
-        <label for="periodRoom">Room: </label>
-        <input type="text" id="periodRoom" name="room">
-        
-        <br>
-        <label for="periodTeacher">Teach: </label>
-        <input type="text" id="periodTeacher" name="teacher">
-      </div>
-    `;
-  }
-}
-
-customElements.define('input-card', InputCard);
 
 // Refreshing the page through the "Load Schedule" button
 const bGetSchedule = document.getElementById("load-schedule")
