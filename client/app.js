@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://humble-space-cod-4qg7w6wpwqqp36pg-5000.app.github.dev"
+const API_BASE_URL = "http://127.0.0.1:5000"
 let connectionStatus = false
 
 class InputCard extends HTMLElement {
@@ -125,6 +125,67 @@ function renderDate(date) {
     })
 }
 
+function getWeekRange(date) {
+  // Start from Sunday of the given date's week
+  const startDate = new Date(date);
+  const dayOfWeek = startDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
+  startDate.setDate(startDate.getDate() - dayOfWeek);
+  startDate.setHours(0, 0, 0, 0);
+
+  // End at midnight transitioning into the next Sunday (or end of Saturday)
+  const endDate = new Date(startDate);
+  endDate.setDate(endDate.getDate() + 7); // Exactly 7 days later at midnight (00:00:00.000)
+
+  return [startDate, endDate];
+}
+
+function isDateBetween(targetDate, startDate, endDate) {
+  const target = new Date(targetDate).getTime();
+  const start = new Date(startDate).getTime();
+  const end = new Date(endDate).getTime();
+
+  // Handle case where startDate might be after endDate
+  const minDate = Math.min(start, end);
+  const maxDate = Math.max(start, end);
+  console.log(start)
+  console.log(end)
+
+  return target >= minDate && target <= maxDate;
+}
+
+function getWeek(date) {
+    const cal = JSON.parse(localStorage.getItem("cal") || "[]");
+    const range = getWeekRange(date)
+    let week = []
+    for (const event of cal) {
+        const title = event.summary
+        if ((title.includes("Schedule") || title.includes("Holiday")
+            || title.includes("BREAK") || title.includes("HOLIDAY")) == false) {
+            continue
+        }
+        const eventDate = new Date(event.start)
+        if (isDateBetween(eventDate, range[0], range[1]))
+        {week.push(event)}
+    }
+    console.log("week: " + week)
+    return week
+}
+
+function getWeekday(date) {
+    const weekday = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+    console.log(weekday)
+    return weekday
+}
+
+function renderWeek(week) {
+    for (const event of week) {
+        const eventDate = new Date(event.start)
+        const weekday = getWeekday(eventDate)
+        const element = document.getElementById(weekday)
+        element.textContent = weekday.slice(0, 3).charAt(0).toUpperCase() + ". " + event.summary
+    }
+}
+
 function renderSchedule(schedule) {
     const scheduleElement = document.getElementById("schedule");
     const scheduleType = document.getElementById("day-schedule")
@@ -132,7 +193,8 @@ function renderSchedule(schedule) {
     // The first event is always the schedule type, splice it
     let scheduleTypeData = schedule.splice(0, 1)[0]
     scheduleType.textContent = scheduleTypeData.summary
-    renderDate(new Date(scheduleTypeData.date))
+    const scheduleDate = new Date(scheduleTypeData.start)
+    renderWeek(getWeek(scheduleDate))
 
     // Clear previously rendered periods.
     scheduleElement.replaceChildren();
