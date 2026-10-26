@@ -8,6 +8,7 @@
   --head-color: black;
   --light-text: rgb(80, 77, 77);
   --button-color: rgb(236, 202, 202);
+  --button-focus-color: rgb(255, 108, 108);
   --button-text-color: black;
 }
  
@@ -125,10 +126,6 @@ header p {
     transition: border-color 0.2s ease;
 }
 
-#load-schedule-input:focus {
-    border-color: #4a90e2;
-}
-
 #load-schedule {
     width: 100%;
     padding: 12px;
@@ -144,7 +141,7 @@ header p {
 }
 
 #load-schedule:hover {
-    background: #357abd;
+    background: var(--button-focus-color);
 }
 
 .status {
