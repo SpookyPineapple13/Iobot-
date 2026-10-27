@@ -47,7 +47,7 @@ header h1 {
 
 header p {
     margin: 0;
-    color: var(--light-text);
+    color: var(--outside-text-color);
     font-size: 0.95rem;
 }
 

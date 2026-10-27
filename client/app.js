@@ -8,6 +8,29 @@ bGetSchedule.addEventListener("click", () => {
     pollData(iGetSchedule.value)
 })
 
+function syncStyle(event) {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const element = document.documentElement
+
+    // light mode
+    if (!isDarkMode) {
+        element.style.setProperty("--bg-color", "white")
+        element.style.setProperty("--title-color", "black")
+        element.style.setProperty("--outside-text-color", "black")
+        element.style.setProperty("--head-color", "black")
+    }
+    else {
+        // dark mode
+        element.style.setProperty("--bg-color", "black")
+        element.style.setProperty("--title-color", "white")
+        element.style.setProperty("--outside-text-color", "white")
+        element.style.setProperty("--head-color", "white")
+    }
+}
+
+const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+darkModeMediaQuery.addEventListener('change', (event) => syncStyle(event));
+
 async function updateCache() {
     const cacheStatus = document.getElementById("cache-status");
     cacheStatus.textContent = "Downloading..."
@@ -306,6 +329,7 @@ function checkConnection(ui=true){
 }
 
 async function main(){
+    syncStyle()
     checkConnection()
     await updateCache()
     pollToday()
