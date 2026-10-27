@@ -91,7 +91,8 @@ async function getSchedule(targetDate) {
        // schedule days are set to midnight - intended date
         const title = event.summary
         if (title.includes("Schedule") || title.includes("Holiday")
-            || title.includes("BREAK") || title.includes("HOLIDAY")) {
+            || title.includes("BREAK") || title.includes("HOLIDAY")
+            || title.includes("NO US")) {
             eventDate = event.date
         }
         else {
@@ -158,7 +159,8 @@ function getWeek(date) {
     for (const event of cal) {
         const title = event.summary
         if ((title.includes("Schedule") || title.includes("Holiday")
-            || title.includes("BREAK") || title.includes("HOLIDAY")) == false) {
+            || title.includes("BREAK") || title.includes("HOLIDAY")
+            || title.includes("NO US")) == false) {
             continue
         }
         const eventDate = new Date(event.start)
