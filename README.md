@@ -46,10 +46,8 @@ Every time the client requests a schedule from a specified date, it sends the eT
 
 This prevents unnecessary cache transactions between the server and client, decreasing load speed.
 
-## Local Development
-1. Clone
-2. Setup venv
-3. Pip install requirements.txt
-4. Open CORS to your preferred port (server/app.py)
+## AI Usage
+Google Gemini was used to generate some boiler point code and tool functions, mostly regarding CSS styling and tedious Date object parsing functions (app.js).
 
-I’m too lazy to create the guide. Lemme know.
+For the most part, Gemini was used as a learning resource for learning JS, CSS, and HTML, as this is my first time using the three in such a way (also with Python Flask, but I’ve had past Python experience). Other resources included the MDN web doc guides and the official Flask documentation. 
+
