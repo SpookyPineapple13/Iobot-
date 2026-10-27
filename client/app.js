@@ -1,36 +1,37 @@
 const API_BASE_URL = "https://humble-space-cod-4qg7w6wpwqqp36pg-5000.app.github.dev"
 let connectionStatus = false
 
-class InputCard extends HTMLElement {
-  connectedCallback() {
-    const title = this.getAttribute('title') || 'Input Title';
-
-    this.innerHTML = `
-      <div class="preference-card">
-        <h3>${title}</h3>
-        <label for="${title}">Name: </label>
-        <input type="text" id="${title}" name="${title}">
-        
-        <br>
-        <label for="periodRoom">Room: </label>
-        <input type="text" id="periodRoom" name="room">
-        
-        <br>
-        <label for="periodTeacher">Teach: </label>
-        <input type="text" id="periodTeacher" name="teacher">
-      </div>
-    `;
-  }
-}
-
-customElements.define('input-card', InputCard);
-
 // Refreshing the page through the "Load Schedule" button
 const bGetSchedule = document.getElementById("load-schedule")
 const iGetSchedule = document.getElementById("load-schedule-input")
 bGetSchedule.addEventListener("click", () => {
     pollData(iGetSchedule.value)
 })
+
+function syncStyle(event) {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const element = document.documentElement
+
+    // light mode
+    if (!isDarkMode) {
+        element.style.setProperty("--bg-color", "white")
+        element.style.setProperty("--title-color", "black")
+        element.style.setProperty("--outside-text-color", "black")
+        element.style.setProperty("--head-color", "black")
+        element.style.setProperty("--card-color", "white")
+    }
+    else {
+        // dark mode
+        element.style.setProperty("--bg-color", "black")
+        element.style.setProperty("--title-color", "white")
+        element.style.setProperty("--outside-text-color", "white")
+        element.style.setProperty("--head-color", "white")
+        element.style.setProperty("--card-color", "lightgray")
+    }
+}
+
+const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+darkModeMediaQuery.addEventListener('change', (event) => syncStyle(event));
 
 async function updateCache() {
     const cacheStatus = document.getElementById("cache-status");
@@ -285,6 +286,9 @@ function pollToday(){
         month: "2-digit",
         day: "2-digit",
     }).replaceAll("/", "-")
+
+    const buttonInput = document.getElementById("load-schedule-input")
+    buttonInput.setAttribute("value", todayString)
     pollData(todayString)
 }
 
@@ -330,6 +334,7 @@ function checkConnection(ui=true){
 }
 
 async function main(){
+    syncStyle()
     checkConnection()
     await updateCache()
     pollToday()
