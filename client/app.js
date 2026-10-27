@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://humble-space-cod-4qg7w6wpwqqp36pg-5000.app.github.dev"
+const API_BASE_URL = "http://127.0.0.1:5000"
 let connectionStatus = false
 
 // Refreshing the page through the "Load Schedule" button
@@ -53,7 +53,6 @@ async function updateCache() {
         if (res.status == 304) {throw new Error("MODERN")} // Do nothing if the cache is modern 
         else if  (!res.ok) {
             displayCouldNotConnect()
-            console.log(res.status)
             throw new Error("FAILED_CONNECTION")
         }
         return res.json()
@@ -148,8 +147,6 @@ function isDateBetween(targetDate, startDate, endDate) {
   // Handle case where startDate might be after endDate
   const minDate = Math.min(start, end);
   const maxDate = Math.max(start, end);
-  console.log(start)
-  console.log(end)
 
   return target >= minDate && target <= maxDate;
 }
@@ -168,7 +165,6 @@ function getWeek(date) {
         if (isDateBetween(eventDate, range[0], range[1]))
         {week.push(event)}
     }
-    console.log("week: " + week)
     return week
 }
 
