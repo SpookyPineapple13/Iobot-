@@ -1,4 +1,17 @@
+:root {
+  --bg-color: white;
+  --card-color: white;
+  --title-color: black;
+  --outside-text-color: black;
 
+  --text-color: black;
+  --head-color: black;
+  --light-text: rgb(80, 77, 77);
+  --button-color: rgb(236, 202, 202);
+  --button-focus-color: rgb(255, 108, 108);
+  --button-text-color: black;
+}
+ 
 * {
     box-sizing: border-box;
 }
@@ -7,34 +20,34 @@ body {
     margin: 0;
     padding: 20px 28px;
     font-family: Arial, sans-serif;
-    background: #f4f5f7;
-    color: #202124;
 
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 260px;
-    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto auto auto;
     grid-template-areas:
         "header header"
-        "schedule controls";
-    gap: 20px 28px;
-    align-items: start;
+        "schedule rightside";
+    column-gap: 20px;
+
+    background-color: var(--bg-color);
 }
 
 /* Header: spans the entire top */
 header {
     grid-area: header;
-    margin: 0;
     text-align: center;
+    margin-bottom: 20px;
 }
 
 header h1 {
     margin: 0 0 6px;
     font-size: 1.8rem;
+    color: var(--title-color)
 }
 
 header p {
     margin: 0;
-    color: #666;
+    color: var(--outside-text-color);
     font-size: 0.95rem;
 }
 
@@ -44,15 +57,19 @@ header p {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
-    align-content: start;
+    align-items: start;
+    align-self: start;
     min-width: 0;
+
+    background-color: var(--bg-color)
 }
 
 /* Individual period cards */
 .period-card {
     padding: 16px 18px;
     border-radius: 10px;
-    background: white;
+    
+    background-color: var(--card-color);
     border: 1px solid #ddd;
     box-shadow: 0 2px 5px rgb(0 0 0 / 5%);
 }
@@ -60,16 +77,18 @@ header p {
 .period-card h2 {
     margin: 0 0 6px;
     font-size: 1.1rem;
+    color: var(--text-color)
 }
 
 .period-card h3 {
     margin: 0 0 6px;
     font-size: 1rem;
+    color: var(--text-color)
 }
 
 .period-card p {
     margin: 4px 0;
-    color: #555;
+    color: var(--light-text);
     font-size: 0.9rem;
     line-height: 1.4;
 }
@@ -78,44 +97,43 @@ header p {
 .load-schedule {
     grid-area: controls;
     align-self: start;
+    align-items: center;
 
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 3px;
 
     width: 100%;
     min-width: 0;
     margin: 0;
     padding: 16px;
 
-    background: white;
+    background-color: var(--card-color);
     border-radius: 12px;
+    border: 1px solid #ddd;
     box-shadow: 0 4px 15px rgb(0 0 0 / 5%);
 }
 
 #load-schedule-input {
-    width: 100%;
+    width: 95%;
     min-width: 0;
     padding: 10px;
     border: 1px solid #ccd1d9;
     border-radius: 6px;
     font-size: 16px;
-    color: #333;
+    color: var(gray);
     outline: none;
     transition: border-color 0.2s ease;
-}
-
-#load-schedule-input:focus {
-    border-color: #4a90e2;
 }
 
 #load-schedule {
     width: 100%;
     padding: 12px;
-    background: #4a90e2;
-    color: white;
-    border: none;
+    background: var(--button-color);
+
+    color: var(--button-text-color);
     border-radius: 6px;
+
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
@@ -123,33 +141,52 @@ header p {
 }
 
 #load-schedule:hover {
-    background: #357abd;
+    background: var(--button-focus-color);
 }
 
-/* Portrait iPad and smaller screens */
-@media (max-width: 700px) {
-    body {
-        padding: 16px;
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: auto auto auto;
-        grid-template-areas:
-            "header"
-            "controls"
-            "schedule";
-        gap: 16px;
-    }
+.status {
+    grid-area: status;
+    align-items: start;
+    
+    align-items: end;
+    text-align: end;
+    margin-top: auto;
 
-    header h1 {
-        font-size: 1.5rem;
-    }
-
-    .load-schedule {
-        max-width: 360px;
-    }
-
-    .period-card {
-        padding: 12px 14px;
-    }
+    color: var(text-color);
 }
 
+.status p {
+    color: var(--outside-text-color)
+}
 
+.week-schedule {
+    grid-area: week;
+    align-items: start;
+    padding: 10px;
+    margin: 3px;
+
+    background-color: var(--card-color);
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 15px rgb(0 0 0 / 5%);;
+}
+
+.messages {
+    grid-area: messages;
+    align-items: start;
+    padding: 10px;
+    margin: 3px;
+    
+    background-color: var(--card-color);
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    border-color: 0 4px 15px rgb(0 0 0 / 5%);
+}
+
+#right-sidebar {
+    grid-area: rightside;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
