@@ -18,6 +18,7 @@ function syncStyle(event) {
         element.style.setProperty("--title-color", "black")
         element.style.setProperty("--outside-text-color", "black")
         element.style.setProperty("--head-color", "black")
+        element.style.setProperty("--card-color", "white")
     }
     else {
         // dark mode
@@ -25,6 +26,7 @@ function syncStyle(event) {
         element.style.setProperty("--title-color", "white")
         element.style.setProperty("--outside-text-color", "white")
         element.style.setProperty("--head-color", "white")
+        element.style.setProperty("--card-color", "lightgray")
     }
 }
 
