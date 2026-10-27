@@ -1,12 +1,44 @@
 const API_BASE_URL = "https://iobot-6mcg.onrender.com"
 let connectionStatus = false
 
-// Refreshing the page through the "Load Schedule" button
+// refreshing the page through the "Load Schedule" button
 const bGetSchedule = document.getElementById("load-schedule")
 const iGetSchedule = document.getElementById("load-schedule-input")
 bGetSchedule.addEventListener("click", () => {
     pollData(iGetSchedule.value)
 })
+
+const timer = document.getElementById("timer-text")
+
+// every second, update the timer
+const timerInterval = setInterval(() => {
+  const now = Date.now();
+  const cards = document.getElementById("schedule").children
+
+  for (const card of cards) {
+    const start = new Date(card.getAttribute("start")).getTime()
+    const end = new Date(card.getAttribute("end")).getTime()
+
+    if (end < now) {card.style.backgroundColor = "gray"; continue} // gray out finished periods
+    
+    if (start > now) {
+        const title = card.getAttribute("title")
+        const difference = getTimeDiffString(now, end)
+        timer.textContent = `${difference} to ${title}`
+        return // exit 
+    }
+
+    if (start < now && end > now) { // display time left in the current period
+        const title = card.getAttribute("title")
+        const difference = getTimeDiffString(now, end)
+        timer.textContent = `${title}: ${difference} Left`
+        return // exit 
+    }
+  }
+
+  timer.textContent = "No Classes Left" // default if the loop doesn't find a current and return exit
+
+}, 1000);
 
 function syncStyle(event) {
     const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -33,6 +65,16 @@ function syncStyle(event) {
 const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 darkModeMediaQuery.addEventListener('change', (event) => syncStyle(event));
 
+function getTimeDiffString(subtractor, subtractee) {
+  const diffInMs = Math.abs(subtractee - subtractor);
+  const totalSeconds = Math.floor(diffInMs / 1000);
+
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${minutes}m ${seconds}s`;
+}
+
 async function updateCache() {
     const cacheStatus = document.getElementById("cache-status");
     cacheStatus.textContent = "Downloading..."
@@ -57,7 +99,7 @@ async function updateCache() {
         }
         return res.json()
     
-    // Update the cache
+    // update the cache
     }).then(data => {
         localStorage.setItem("cal", JSON.stringify(data["events"]))
         localStorage.setItem("etag", data["etag"])
@@ -127,13 +169,13 @@ function renderDate(date) {
 }
 
 function getWeekRange(date) {
-  // Start from Sunday of the given date's week
+  // start from Sunday of the given date's week
   const startDate = new Date(date);
   const dayOfWeek = startDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
   startDate.setDate(startDate.getDate() - dayOfWeek);
   startDate.setHours(0, 0, 0, 0);
 
-  // End at midnight transitioning into the next Sunday (or end of Saturday)
+  // end at midnight transitioning into the next Sunday (or end of Saturday)
   const endDate = new Date(startDate);
   endDate.setDate(endDate.getDate() + 7); // Exactly 7 days later at midnight (00:00:00.000)
 
@@ -145,13 +187,14 @@ function isDateBetween(targetDate, startDate, endDate) {
   const start = new Date(startDate).getTime();
   const end = new Date(endDate).getTime();
 
-  // Handle case where startDate might be after endDate
+  // handle case where startDate might be after endDate
   const minDate = Math.min(start, end);
   const maxDate = Math.max(start, end);
 
   return target >= minDate && target <= maxDate;
 }
 
+// grab the schedule titles for the entire week, same filtering as getSchedule()
 function getWeek(date) {
     const cal = JSON.parse(localStorage.getItem("cal") || "[]");
     const range = getWeekRange(date)
@@ -208,18 +251,25 @@ function renderSchedule(schedule) {
     const scheduleElement = document.getElementById("schedule");
     const scheduleType = document.getElementById("day-schedule")
 
-    // The first event is always the schedule type, splice it
+    // first event is always the schedule type, splice it
     let scheduleTypeData = schedule.splice(0, 1)[0]
     scheduleType.textContent = scheduleTypeData.summary
+
+    // render the entire week of this date
     const scheduleDate = new Date(scheduleTypeData.start)
     renderWeek(getWeek(scheduleDate))
 
-    // Clear previously rendered periods.
+    // clear previously rendered periods.
     scheduleElement.replaceChildren();
 
     for (const period of schedule) {
         const card = document.createElement("article");
         card.classList.add("period-card");
+
+        // for timer integration
+        card.setAttribute("title", period.summary)
+        card.setAttribute("start", period.start)
+        card.setAttribute("end", period.end)
 
         const heading = document.createElement("h2")
         heading.textContent = period.summary
@@ -236,18 +286,6 @@ function renderSchedule(schedule) {
             `${jsStart.toLocaleTimeString([], {timeZone: "Pacific/Honolulu", timeStyle:"short"})} – ${jsEnd.toLocaleTimeString([], {timeZone: "Pacific/Honolulu", timeStyle:"short"})}`;
 
         card.append(heading, subject, time);
-
-        if (period.location) {
-            const location = document.createElement("p");
-            location.textContent = period.location;
-            card.append(location);
-        }
-
-        if (period.teacher) {
-            const teacher = document.createElement("p");
-            teacher.textContent = period.teacher;
-            card.append(teacher);
-        }
 
         scheduleElement.append(card);
     }
@@ -266,7 +304,6 @@ function setScheduleNone(dateString) {
     const scheduleType = document.getElementById("day-schedule")
     scheduleType.textContent = "No Data "
 }
-
 
 async function pollData(dateString) {
     setScheduleLoading(dateString) // relies on the next line to load
