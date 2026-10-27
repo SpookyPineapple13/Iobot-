@@ -23,7 +23,7 @@ const timerInterval = setInterval(() => {
     
     if (start > now) {
         const title = card.getAttribute("title")
-        const difference = getTimeDiffString(now, end)
+        const difference = getTimeDiffString(now, start
         timer.textContent = `${difference} to ${title}`
         return // exit 
     }
