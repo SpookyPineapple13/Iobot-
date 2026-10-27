@@ -46,6 +46,16 @@ Every time the client requests a schedule from a specified date, it sends the eT
 
 This prevents unnecessary cache transactions between the server and client, decreasing load speed.
 
+## Deployment
+Server
+* Runs on gunicorn
+* Hosted on a free Render web-service
+  * The free tier causes the server to spin down after a couple minutes of inactivity
+  * Can take up to 50 seconds for the server to spin back-up
+
+Client was deployed here on GithubPages
+
+
 ## AI Usage
 Google Gemini was used to generate some boiler point code and tool functions, mostly regarding CSS styling and tedious Date object parsing functions (app.js).
 
