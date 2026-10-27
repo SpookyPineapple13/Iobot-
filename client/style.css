@@ -183,6 +183,21 @@ header p {
     border-color: 0 4px 15px rgb(0 0 0 / 5%);
 }
 
+.timer-body {
+    align-items: center;
+    padding: 10px;
+    margin: 3px;
+    
+    background-color: var(--card-color);
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    border-color: 0 4px 15px rgb(0 0 0 / 5%);
+}
+
+#timer-text {
+    text-align : center;
+}
+
 #right-sidebar {
     grid-area: rightside;
 
