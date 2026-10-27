@@ -284,6 +284,9 @@ function pollToday(){
         month: "2-digit",
         day: "2-digit",
     }).replaceAll("/", "-")
+
+    const buttonInput = document.getElementById("load-schedule-input")
+    buttonInput.setAttribute("value", todayString)
     pollData(todayString)
 }
 
